@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harness Engineering — ฉบับเข้าใจถึงแก่น</title>
+<meta name="description" content="Harness Engineering ฉบับเข้าใจถึงแก่น — ศาสตร์ของการออกแบบระบบรอบ AI agent: agent loop, context management, tool design, feedback loops, guardrails, observability, memory, subagents, evals จนถึงผ่า Claude Code · ภาษาไทย พร้อมไดอะแกรม">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#faf7f1; --paper-2:#f2ede3; --ink:#222b2e; --ink-soft:#54625f;
+  --line:#ddd5c6; --teal:#0e6e63; --teal-deep:#0a5048; --teal-soft:#e2eeea;
+  --amber:#c07415; --amber-soft:#f8ecd8; --red:#b3402e; --red-soft:#f6e3de;
+  --code-bg:#26302f; --code-ink:#e8e3d6;
+  --l0:#5a8a5e; --l0-soft:#e6efe4;
+  --l1:#0e6e63; --l1-soft:#e2eeea;
+  --l2:#c07415; --l2-soft:#f8ecd8;
+  --l3:#c2562a; --l3-soft:#f8e6dc;
+  --l4:#a33327; --l4-soft:#f6e0db;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:2rem}
+body{background:var(--paper);color:var(--ink);font-family:'Anuphan',sans-serif;font-size:17px;line-height:1.85;-webkit-font-smoothing:antialiased}
+::selection{background:var(--teal);color:#fff}
+
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:99}
+
+.layout{display:grid;grid-template-columns:320px minmax(0,1fr);max-width:1320px;margin:0 auto}
+@media(max-width:1080px){.layout{grid-template-columns:minmax(0,1fr)}}
+
+.sidebar{border-right:1px solid var(--line);padding:2.4rem 1.5rem 2.4rem 2rem}
+.sidebar-inner{position:sticky;top:1.8rem;max-height:calc(100vh - 3.6rem);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.brand{font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:1.15rem;letter-spacing:.02em;color:var(--teal-deep)}
+.brand .arrow{color:var(--amber);font-family:'IBM Plex Mono',monospace}
+.brand small{display:block;font-family:'Anuphan';font-weight:500;font-size:.78rem;color:var(--ink-soft);margin-top:.2rem}
+.toc{list-style:none;margin-top:1.5rem}
+.toc .grp{font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:1.1rem 0 .35rem .7rem;display:flex;align-items:center;gap:.45rem}
+.toc .grp::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--gc,var(--teal))}
+.toc li a{display:flex;gap:.6rem;align-items:baseline;padding:.34rem .7rem;border-radius:7px;color:var(--ink-soft);text-decoration:none;font-size:.88rem;font-weight:500;transition:background .15s,color .15s}
+.toc li a .n{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--amber);min-width:1.6em}
+.toc li a:hover{background:var(--paper-2);color:var(--ink)}
+.toc li a.active{background:var(--teal-soft);color:var(--teal-deep);font-weight:600}
+.toc li a.active .n{color:var(--teal)}
+#tocToggle{display:none;margin-top:.9rem;padding:.4rem .9rem;border:1px solid var(--line);background:#fff;border-radius:7px;font-family:'Anuphan';font-size:.85rem;cursor:pointer;color:var(--ink-soft)}
+@media(max-width:1080px){
+  .sidebar{border-right:0;border-bottom:1px solid var(--line);padding:1.4rem}
+  .sidebar-inner{position:static;max-height:none;overflow:visible}
+  .toc{display:none}.toc.open{display:block}#tocToggle{display:inline-block}
+}
+
+main{padding:0 clamp(1.3rem,4vw,4.5rem) 6rem;max-width:880px}
+
+.hero{padding:4.5rem 0 3.2rem;border-bottom:1px solid var(--line)}
+.hero .kicker{font-family:'IBM Plex Mono',monospace;font-size:.78rem;letter-spacing:.14em;color:var(--amber);text-transform:uppercase}
+.hero h1{font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:clamp(2.1rem,5vw,3.3rem);line-height:1.15;margin:.7rem 0 1.1rem}
+.hero h1 .g{color:var(--teal)}
+.hero h1 .arrow{color:var(--amber);font-family:'IBM Plex Mono',monospace}
+.hero p.lead{font-size:1.07rem;color:var(--ink-soft);max-width:42em}
+.hero p.lead a{color:var(--teal-deep);border-bottom:1px solid var(--line)}
+.hero .meta{display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;margin-top:1.6rem;font-size:.83rem;color:var(--ink-soft)}
+.hero .meta b{color:var(--ink);font-weight:600}
+.ladder{display:flex;gap:.4rem;margin-top:1.8rem;flex-wrap:wrap}
+.ladder span{font-family:'IBM Plex Mono',monospace;font-size:.72rem;padding:.3rem .7rem;border-radius:20px;font-weight:500}
+
+.chapter{padding-top:4rem}
+.ch-head{border-bottom:2px solid var(--ink);padding-bottom:.85rem;margin-bottom:1.7rem}
+.ch-head .row{display:flex;align-items:baseline;gap:1.1rem}
+.ch-head .num{font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:2.5rem;line-height:1;color:var(--amber)}
+.ch-head h2{font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:clamp(1.3rem,2.6vw,1.7rem);line-height:1.3}
+.ch-head .chip{display:inline-block;margin-top:.7rem;font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:600;padding:.2rem .7rem;border-radius:20px;letter-spacing:.03em}
+
+h3{font-family:'Bai Jamjuree',sans-serif;font-weight:600;font-size:1.18rem;margin:2.5rem 0 .8rem;color:var(--teal-deep)}
+h4{font-family:'Bai Jamjuree',sans-serif;font-weight:600;font-size:1rem;margin:1.7rem 0 .5rem}
+p{margin:.85rem 0}strong{font-weight:600}em{font-style:italic;color:var(--ink-soft)}
+ul,ol{margin:.8rem 0 1rem 1.5rem}li{margin:.35rem 0}li::marker{color:var(--amber)}
+code{font-family:'IBM Plex Mono',monospace;font-size:.82em;background:var(--paper-2);border:1px solid var(--line);padding:.08em .4em;border-radius:5px}
+
+pre{background:var(--code-bg);color:var(--code-ink);font-family:'IBM Plex Mono','Anuphan',monospace;font-size:.86rem;line-height:1.85;padding:1.1rem 1.3rem;border-radius:10px;overflow-x:auto;margin:1.2rem 0}
+pre code{background:none;border:0;padding:0;color:inherit;white-space:pre-wrap;word-break:break-word;font-size:inherit}
+pre .ph{color:#f0b35e;font-weight:600}
+pre .cm{color:#8fa39b}
+pre .gd{color:#9ed0b5}
+pre .bd{color:#e88c74}
+
+pre{position:relative}
+.copy-btn{position:absolute;top:.5rem;right:.55rem;font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.03em;color:#cdd6d0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);padding:.2rem .55rem;border-radius:6px;cursor:pointer;opacity:0;transition:opacity .15s,background .15s,color .15s}
+pre:hover .copy-btn,.copy-btn:focus-visible{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.copy-btn.done{color:#9ed0b5;border-color:#9ed0b5;opacity:1}
+@media(max-width:680px){.copy-btn{opacity:.85}}
+.prompt-label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin:1.4rem 0 -.4rem}
+
+table{width:100%;border-collapse:collapse;margin:1.4rem 0;font-size:.92rem;line-height:1.6}
+th{font-family:'Bai Jamjuree',sans-serif;font-weight:600;text-align:left;background:var(--ink);color:var(--paper);padding:.6rem .85rem;font-size:.85rem}
+th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+td{padding:.6rem .85rem;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:rgba(242,237,227,.55)}
+td b{font-weight:600;color:var(--teal-deep)}
+
+.note,.warn,.use{margin:1.6rem 0;padding:1rem 1.2rem .95rem;border-radius:10px;font-size:.94rem}
+.note{background:var(--teal-soft)}.warn{background:var(--red-soft)}.use{background:var(--amber-soft)}
+.note .t,.warn .t,.use .t{font-family:'Bai Jamjuree',sans-serif;font-weight:600;font-size:.86rem;display:block;margin-bottom:.3rem}
+.note .t{color:var(--teal-deep)}.warn .t{color:var(--red)}.use .t{color:var(--amber)}
+
+.fig{margin:2.2rem 0;padding:1.6rem 1.4rem 1.1rem;background:#fff;border:1px solid var(--line);border-radius:12px;overflow-x:auto}
+.fig svg{width:100%;height:auto;display:block;min-width:560px}
+.fig figcaption{margin-top:.9rem;padding-top:.7rem;border-top:1px dashed var(--line);font-size:.83rem;color:var(--ink-soft)}
+.fig figcaption b{color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:.76rem}
+.fig text{font-family:'Anuphan',sans-serif}
+.fig .lbl{font-size:13px;font-weight:600;fill:var(--ink)}
+.fig .lbl-w{font-size:13px;font-weight:600;fill:#fff}
+.fig .sub{font-size:11px;fill:var(--ink-soft)}
+.fig .sub-w{font-size:11px;fill:#e8e3d6}
+.fig .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:var(--ink-soft)}
+.fig .flow{stroke:var(--ink-soft);stroke-width:1.5;fill:none}
+.fig .flow-t{stroke:var(--teal);stroke-width:1.7;fill:none}
+.fig .flow-a{stroke:var(--amber);stroke-width:1.7;fill:none}
+.fig .flow-r{stroke:var(--red);stroke-width:1.7;fill:none}
+.fig .dash{stroke-dasharray:5 4}
+
+.chapter-end{margin-top:3.2rem;text-align:center;color:var(--amber);font-family:'IBM Plex Mono',monospace;font-size:.8rem;letter-spacing:.5em}
+footer{margin-top:5rem;padding-top:2rem;border-top:2px solid var(--ink);font-size:.88rem;color:var(--ink-soft)}
+footer b{color:var(--ink)}
+footer a{color:var(--teal-deep);border-bottom:1px solid var(--line)}
+footer a:hover{color:var(--red);border-color:var(--red)}
+
+@media print{
+  #progress,.sidebar,#tocToggle{display:none}
+  .layout{display:block}main{max-width:100%;padding:0}
+  .fig,table,pre,.note,.warn,.use{break-inside:avoid}
+  .fig svg{min-width:0}.chapter{padding-top:2rem}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1,1 L8,4.5 L1,8 Z" fill="#54625f"/></marker>
+  <marker id="ar-t" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1,1 L8,4.5 L1,8 Z" fill="#0e6e63"/></marker>
+  <marker id="ar-a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1,1 L8,4.5 L1,8 Z" fill="#c07415"/></marker>
+  <marker id="ar-r" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1,1 L8,4.5 L1,8 Z" fill="#b3402e"/></marker>
+</defs></svg>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-inner">
+    <div class="brand">HARNESS <span class="arrow">ENG.</span><small>ศาสตร์ของระบบรอบ AI agent · ฉบับเข้าใจถึงแก่น</small></div>
+    <button id="tocToggle">☰ สารบัญ</button>
+    <ul class="toc" id="toc">
+      <li class="grp" style="--gc:var(--l0)">Level 0 · ปูพื้น</li>
+      <li><a href="#ch1"><span class="n">01</span>Model vs Harness</a></li>
+      <li><a href="#ch2"><span class="n">02</span>กายวิภาคของ agent loop</a></li>
+      <li class="grp" style="--gc:var(--l1)">Level 1 · เสาหลัก</li>
+      <li><a href="#ch3"><span class="n">03</span>Context management</a></li>
+      <li><a href="#ch4"><span class="n">04</span>Tool design</a></li>
+      <li><a href="#ch5"><span class="n">05</span>Feedback loops</a></li>
+      <li class="grp" style="--gc:var(--l2)">Level 2 · คุมให้อยู่</li>
+      <li><a href="#ch6"><span class="n">06</span>Guardrails &amp; permissions</a></li>
+      <li><a href="#ch7"><span class="n">07</span>Observability</a></li>
+      <li><a href="#ch8"><span class="n">08</span>Stop conditions &amp; failure</a></li>
+      <li class="grp" style="--gc:var(--l3)">Level 3 · ขยายระบบ</li>
+      <li><a href="#ch9"><span class="n">09</span>Memory &amp; skills</a></li>
+      <li><a href="#ch10"><span class="n">10</span>Subagents &amp; orchestration</a></li>
+      <li><a href="#ch11"><span class="n">11</span>Evals — วัดว่าดีขึ้นจริง</a></li>
+      <li class="grp" style="--gc:var(--l4)">Level 4 · แงะของจริง</li>
+      <li><a href="#ch12"><span class="n">12</span>ผ่า Claude Code</a></li>
+      <li><a href="#ch13"><span class="n">13</span>ออกแบบ harness ของตัวเอง</a></li>
+      <li><a href="#ch14"><span class="n">14</span>อนาคตของศาสตร์นี้</a></li>
+    </ul>
+  </div>
+</aside>
+
+<main>
+<header class="hero">
+  <div class="kicker">Handbook #08 · บันไดสาย AI ขั้นสุดท้าย</div>
+  <h1>Agent <span class="arrow">=</span> Model <span class="arrow">+</span> <span class="g">Harness</span><br>ทำไมโมเดลเดียวกัน เก่งไม่เท่ากัน</h1>
+  <p class="lead">ภาคต่อของ <a href="https://tayakorn221.github.io/prompt-engineering-handbook/">Prompt 0 → Hero</a> สำหรับคนที่ใช้ AI agent เป็นแล้ว (Claude Code, Codex ฯลฯ) และอยากเข้าใจว่าข้างในมันทำงานยังไง — agent loop, context, tools, feedback loops, guardrails, observability, memory, subagents, evals — จนถึงผ่า Claude Code ทั้งตัว แล้วคิดแบบคนออกแบบระบบได้เอง · เน้นเข้าใจกลไก ไม่ใช่ท่องสูตร</p>
+  <div class="meta">
+    <span>ระดับ: <b>ใช้ agent เป็น → ออกแบบระบบเป็น</b></span>
+    <span>14 บท · 5 ระดับ</span>
+    <span>เวลาอ่าน: <b>~45 นาที</b> (อ่านเป็น Level ได้)</span>
+    <span>ภาษา: <b>ไทย พร้อมไดอะแกรม</b></span>
+  </div>
+  <div class="ladder">
+    <span style="background:var(--l0-soft);color:var(--l0)">0 · ปูพื้น</span>
+    <span style="background:var(--l1-soft);color:var(--l1)">1 · เสาหลัก</span>
+    <span style="background:var(--l2-soft);color:var(--l2)">2 · คุมให้อยู่</span>
+    <span style="background:var(--l3-soft);color:var(--l3)">3 · ขยายระบบ</span>
+    <span style="background:var(--l4-soft);color:var(--l4)">4 · แงะของจริง</span>
+  </div>
+</header>
+
+<!-- ============================ CH1 ============================ -->
+<section class="chapter" id="ch1">
+  <div class="ch-head">
+    <div class="row"><div class="num">01</div><h2>Model vs Harness — ทำไมโมเดลเดียวกันเก่งไม่เท่ากัน</h2></div>
+    <span class="chip" style="background:var(--l0-soft);color:var(--l0)">LEVEL 0 · ปูพื้น</span>
+  </div>
+
+  <p>ลองนึกภาพนี้ครับ — พี่แปะ error ลงแชตธรรมดาแล้วถามว่า "ช่วยแก้บั๊กนี้หน่อย" · AI ตอบวิธีแก้มาเป็นฉาก ๆ อ่านดูก็สมเหตุสมผล แต่พอเอาไปใช้จริง: ไฟล์ที่มันอ้างไม่มีอยู่จริง ฟังก์ชันที่มันบอกให้แก้ก็ชื่อไม่ตรง — เพราะมันไม่เคยเห็นโปรเจกต์ของพี่เลย มันเดาจากประสบการณ์ล้วน ๆ</p>
+  <p>ทีนี้เปิด <strong>Claude Code</strong> แล้วสั่งประโยคเดียวกัน — มันไล่เปิดไฟล์จริง หาโค้ดที่เกี่ยวจริง ลงมือแก้ รันเทสต์ พอเทสต์พังมันอ่าน error แล้วแก้ต่อ วนจนผ่าน · <strong>โมเดลข้างในคือตัวเดียวกันเป๊ะ</strong> — แล้วอะไรทำให้ผลงานต่างกันคนละโลก?</p>
+  <p>คำตอบคือสิ่งที่เล่มนี้ทั้งเล่มว่าด้วย: <strong>harness</strong> — ระบบรอบตัวโมเดล</p>
+
+  <h3>1.1 Agent = Model + Harness</h3>
+  <p>คำว่า harness แปลตรงตัวคือ <em>ชุดสายรัด/บังเหียนม้า</em> — ชื่อนี้จงใจ: ตัวม้า (โมเดล) มีแรงมหาศาล แต่ลำพังมันวิ่งสะเปะสะปะ สิ่งที่แปลงแรงม้าให้กลายเป็น "งานที่ควบคุมได้" คือบังเหียนกับสายรัดที่ห่อตัวมันอยู่ · ในโลก AI, harness คือ<strong>ชั้นซอฟต์แวร์ที่ห่อโมเดลไว้</strong> ทำหน้าที่ 5 อย่าง:</p>
+  <ul>
+    <li><strong>Context</strong> — คัดว่าโมเดลจะ "เห็น" อะไรบ้างในแต่ละจังหวะ (บทที่ 3)</li>
+    <li><strong>Tools</strong> — ให้มือมัน: อ่านไฟล์ รันคำสั่ง ค้นเว็บ ทำอะไรกับโลกภายนอกได้บ้าง (บทที่ 4)</li>
+    <li><strong>Feedback</strong> — ช่องทางให้มันรู้เองว่างานที่ทำถูกหรือผิด (บทที่ 5)</li>
+    <li><strong>Guardrails</strong> — กันความเสียหาย: อะไรทำได้เลย อะไรต้องถามคนก่อน (บทที่ 6)</li>
+    <li><strong>Observability</strong> — ให้คนมองเห็นว่ามันกำลังทำอะไร คิดอะไร เปลืองเท่าไหร่ (บทที่ 7)</li>
+  </ul>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="วงแหวนสามชั้น: แกนกลางคือ Model ที่ทำได้อย่างเดียวคือพ่นข้อความ ห่อด้วยชั้น Harness ซึ่งมีห้าหน้าที่คือ context, tools, feedback, guardrails, observability รวมกันทั้งก้อนคือ Agent ที่ผู้ใช้เห็น">
+      <circle cx="190" cy="172" r="142" fill="none" stroke="#54625f" stroke-width="1.3" stroke-dasharray="6 5"/>
+      <circle cx="190" cy="172" r="104" fill="#e2eeea" stroke="#0e6e63" stroke-width="1.5"/>
+      <circle cx="190" cy="172" r="52" fill="#222b2e"/>
+      <text x="190" y="168" text-anchor="middle" class="lbl-w">MODEL</text>
+      <text x="190" y="186" text-anchor="middle" class="sub-w">พ่นข้อความ</text>
+      <rect x="146" y="56" width="88" height="22" rx="11" fill="#fff" stroke="#0e6e63"/><text x="190" y="71" text-anchor="middle" class="mono" fill="#0a5048">context</text>
+      <rect x="252" y="124" width="76" height="22" rx="11" fill="#fff" stroke="#c07415"/><text x="290" y="139" text-anchor="middle" class="mono" fill="#c07415">tools</text>
+      <rect x="216" y="242" width="86" height="22" rx="11" fill="#fff" stroke="#5a8a5e"/><text x="259" y="257" text-anchor="middle" class="mono" fill="#5a8a5e">feedback</text>
+      <rect x="76" y="242" width="94" height="22" rx="11" fill="#fff" stroke="#b3402e"/><text x="123" y="257" text-anchor="middle" class="mono" fill="#b3402e">guardrails</text>
+      <rect x="34" y="124" width="110" height="22" rx="11" fill="#fff" stroke="#54625f"/><text x="89" y="139" text-anchor="middle" class="mono">observability</text>
+      <text x="190" y="336" text-anchor="middle" class="mono">AGENT = ทั้งก้อนที่ผู้ใช้เห็น</text>
+
+      <text x="390" y="46" class="lbl" fill="#0a5048">5 หน้าที่ของ harness</text>
+      <rect x="390" y="66" width="11" height="11" rx="2" fill="#0e6e63"/><text x="410" y="77" class="lbl">Context</text><text x="410" y="95" class="sub">คัดว่าโมเดลเห็นอะไร ในจังหวะไหน (บท 3, 9)</text>
+      <rect x="390" y="122" width="11" height="11" rx="2" fill="#c07415"/><text x="410" y="133" class="lbl">Tools</text><text x="410" y="151" class="sub">มือของมัน — ทำอะไรกับโลกภายนอกได้ (บท 4)</text>
+      <rect x="390" y="178" width="11" height="11" rx="2" fill="#5a8a5e"/><text x="410" y="189" class="lbl">Feedback</text><text x="410" y="207" class="sub">ช่องทางรู้เองว่างานถูกหรือผิด (บท 5)</text>
+      <rect x="390" y="234" width="11" height="11" rx="2" fill="#b3402e"/><text x="410" y="245" class="lbl">Guardrails</text><text x="410" y="263" class="sub">ขีดเส้นความเสียหาย — อะไรต้องถามคน (บท 6)</text>
+      <rect x="390" y="290" width="11" height="11" rx="2" fill="#54625f"/><text x="410" y="301" class="lbl">Observability</text><text x="410" y="319" class="sub">คนมองเห็นว่ามันทำอะไร เปลืองเท่าไหร่ (บท 7)</text>
+    </svg>
+    <figcaption><b>FIG 1.1</b> — Agent ไม่ใช่โมเดล แต่คือ โมเดล + ระบบที่ห่อมัน · โมเดลตัวเดียวกัน เปลี่ยน harness = ได้ agent คนละระดับ</figcaption>
+  </figure>
+
+  <p>ประโยคที่อยากให้จำจากบทนี้: <strong>โมเดลคือส่วนที่เราคุมไม่ได้ แต่ harness คือส่วนที่เราออกแบบได้</strong> · โมเดลเก่งขึ้นทุกปีตามจังหวะของ lab ผู้สร้าง — เราทำอะไรกับมันไม่ได้นอกจากรอ แต่ harness อยู่ในมือเราทั้งหมด และมันคือตัวตัดสินว่าความเก่งของโมเดลจะถูกรีดออกมาใช้กับงานจริงได้กี่เปอร์เซ็นต์</p>
+
+  <h3>1.2 สามยุคของการทำงานกับ AI</h3>
+  <p>ถ้าไล่เส้นทางของ collection นี้ จะเห็นวิวัฒนาการของ "ทักษะฝั่งคน" ชัดมาก:</p>
+  <table>
+    <tr><th>ยุค</th><th>คำถามหลัก</th><th>ตัวอย่างทักษะ</th></tr>
+    <tr><td><b>Prompt engineering</b><br>(เล่ม #06–#07)</td><td>พูดกับโมเดลยังไงให้ได้งาน</td><td>few-shot, chain-of-thought, จัดโครง prompt</td></tr>
+    <tr><td><b>Context engineering</b></td><td>ป้อนข้อมูลอะไร เมื่อไหร่ ให้โมเดลเห็น</td><td>grounding/RAG, เลือกเอกสาร, จัดการหน้าต่างความจำ</td></tr>
+    <tr><td><b>Harness engineering</b><br>(เล่มนี้)</td><td>ออกแบบ "ระบบรอบโมเดล" ยังไงให้ agent ทำงานจริงจบได้เอง</td><td>tool design, feedback loops, guardrails, evals</td></tr>
+  </table>
+  <p>สังเกตว่าแต่ละยุค<strong>ไม่ได้แทนที่กัน แต่ซ้อนขยายกันขึ้นมา</strong> — ใน harness ที่ดี ยังมี prompt ที่ดีอยู่ข้างใน (system prompt, tool description) และมี context engineering เป็นเสาหลักเสาหนึ่ง (บทที่ 3) · สิ่งที่เปลี่ยนคือหน่วยของการคิด: จาก "ข้อความหนึ่งกล่อง" → "ข้อมูลหนึ่งชุด" → <strong>"ระบบทั้งระบบ"</strong></p>
+
+  <h3>1.3 ทำไมศาสตร์นี้เพิ่งมีชื่อ — และทำไมมันสำคัญตอนนี้</h3>
+  <p>คำว่า harness engineering ตกผลึกเป็นชื่อเรียกช่วง<strong>ปลายปี 2025 ถึงต้นปี 2026</strong> — จุดที่คนดัง ๆ ในวงการ (เช่น Mitchell Hashimoto ผู้สร้าง Terraform) เริ่มเขียนว่างานหลักของเขาตอนนี้ไม่ใช่การเขียนโค้ดตรง ๆ แต่คือการ<em>ออกแบบระบบให้ agent เขียนโค้ดได้ดี</em> และทีมผู้สร้างโมเดลเองก็เริ่มมีทีม harness แยกออกมาจริงจัง</p>
+  <p>หลักฐานที่จับต้องได้สุดมาจาก benchmark อย่าง <strong>SWE-bench</strong> (ชุดทดสอบให้ AI แก้ issue จริงจาก GitHub): โมเดลตัวเดียวกัน รันผ่าน harness คนละตัว คะแนนต่างกันได้เป็น<strong>หลายสิบเปอร์เซ็นต์</strong> — อันดับใน leaderboard ขยับได้โดยไม่ต้องแตะโมเดลเลยสักนิด แค่เปลี่ยนเครื่องมือที่ให้ วิธีป้อน context และวิธีให้มันตรวจงานตัวเอง · นั่นคือวินาทีที่วงการยอมรับกันว่า "ตัวห่อ" ไม่ใช่รายละเอียด แต่เป็น<strong>ครึ่งหนึ่งของความเก่ง</strong></p>
+
+  <div class="note"><span class="t">มุมที่เล่มนี้ยืน</span>เล่มนี้ใช้ <strong>Claude Code เป็นตัวอย่างประจำเล่ม</strong> (เดาว่าพี่คงเคยใช้มาแล้ว) แต่หลักการทุกบทเขียนให้เป็นกลาง — ใช้เข้าใจ Codex, Cursor, agent ที่บริษัทพี่สร้างเอง หรือ harness ตัวไหนก็ได้ เพราะทุกตัวประกอบจากชิ้นส่วน 5 ชิ้นเดียวกันนี้</div>
+
+  <div class="note"><span class="t">สรุปบทที่ 1</span>Agent = Model + Harness · harness คือชั้นซอฟต์แวร์ห่อโมเดล ทำ 5 หน้าที่: context, tools, feedback, guardrails, observability · โมเดลคือส่วนที่เราคุมไม่ได้ — harness คือส่วนที่เราออกแบบได้ และตัดสินว่าความเก่งถูกรีดออกมากี่ % · prompt → context → harness ไม่ได้แทนที่กัน แต่ขยายหน่วยการคิดจากข้อความเดียวเป็นทั้งระบบ · benchmark ยุคนี้ คะแนนขึ้นกับ harness พอ ๆ กับโมเดล</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH2 ============================ -->
+<section class="chapter" id="ch2">
+  <div class="ch-head">
+    <div class="row"><div class="num">02</div><h2>กายวิภาคของ Agent Loop</h2></div>
+    <span class="chip" style="background:var(--l0-soft);color:var(--l0)">LEVEL 0 · ปูพื้น</span>
+  </div>
+
+  <p>ก่อนจะออกแบบระบบรอบโมเดล ต้องเห็นก่อนว่าโมเดล "เปล่า ๆ" ทำอะไรได้บ้าง · คำตอบโหดกว่าที่คิด: <strong>มันไม่มีมือ</strong> — โมเดลภาษารับข้อความเข้า แล้วพ่นข้อความออก จบแค่นั้น มันเปิดไฟล์ไม่ได้ รันคำสั่งไม่ได้ ต่อเน็ตไม่ได้ แม้แต่จำอะไรข้ามรอบยังไม่ได้ (<a href="https://tayakorn221.github.io/prompt-engineering-handbook/" style="color:var(--teal-deep);border-bottom:1px solid var(--line)">เล่ม #07</a> บทที่ 1 ปูเรื่องนี้ไว้แล้ว)</p>
+  <p>แล้ว agent ที่ "ทำงานเองเป็นชั่วโมง" มาจากไหน? มาจาก harness ที่เอาความสามารถเดียวของโมเดล (พ่นข้อความ) มา<strong>วนอยู่ใน loop ง่าย ๆ อันเดียว</strong> — วงจรที่เรียบง่ายจนน่าตกใจ แต่ทั้งวงการตั้งอยู่บนมัน</p>
+
+  <h3>2.1 วงจรพื้นฐาน — โค้ดไม่ถึง 15 บรรทัด</h3>
+  <div class="prompt-label" style="color:var(--ink-soft)">▸ pseudocode: agent loop ทั้งตัว</div>
+  <pre><code>history = [system_prompt, tool_schemas, งานจากผู้ใช้]  <span class="cm"># สิ่งที่โมเดล "เห็น"</span>
+
+<span class="ph">loop:</span>
+    response = model(history)             <span class="cm"># โมเดลทำได้แค่นี้: พ่นข้อความ</span>
+
+    if response คือข้อความธรรมดา:          <span class="cm"># ไม่ขอใช้เครื่องมือแล้ว</span>
+        <span class="ph">return</span> response                   <span class="cm"># → ถือว่าจบงาน ตอบผู้ใช้</span>
+
+    call = response.tool_call             <span class="cm"># เช่น read_file("app.py")</span>
+    if not allowed(call):                 <span class="cm"># ด่าน guardrails (บท 6)</span>
+        result = ask_human(call)          <span class="cm"># เสี่ยงไป → ให้คนตัดสิน</span>
+    else:
+        result = execute(call)            <span class="cm"># harness เป็นคนรันจริงเสมอ</span>
+
+    history += [call, result]             <span class="cm"># ผลกลายเป็น context รอบถัดไป</span></code></pre>
+
+  <p>ไล่ตามทีละขั้น: harness <strong>รวบ context</strong> (ทุกอย่างที่โมเดลควรเห็น) → ส่งเข้าโมเดล → โมเดลตอบได้ 2 แบบ: <strong>ข้อความธรรมดา</strong> (แปลว่าจบงานหรือมีคำถาม) หรือ <strong>tool call</strong> (คำขอใช้เครื่องมือ เป็นข้อความรูปแบบ JSON) → harness ตรวจสิทธิ์แล้ว<strong>รันเครื่องมือให้จริง</strong> → ยัดผลลัพธ์กลับเข้า context → วนใหม่ จนกว่าโมเดลจะเลิกขอใช้เครื่องมือ</p>
+  <p>จุดที่คนเข้าใจผิดบ่อยสุด: โมเดล<strong>ไม่ได้รันเครื่องมือเอง</strong> — มันแค่ "เขียนคำขอ" ออกมาเป็นข้อความ · คนกดปุ่มจริงคือ harness เสมอ และตรงนี้แหละคือที่มาของอำนาจทั้งหมด: harness จะรันตามคำขอ, ขอคำยืนยันจากคนก่อน, หรือปฏิเสธเลยก็ได้ (บทที่ 6) — โมเดลบังคับอะไรไม่ได้เลย</p>
+
+  <h3>2.2 อะไรถูกประกอบเข้า context ทุกรอบ</h3>
+  <p>บรรทัดแรกของ pseudocode ซ่อนเรื่องใหญ่ไว้ — ทุกรอบที่เรียกโมเดล harness เป็นคน<strong>ประกอบ</strong>สิ่งที่โมเดลเห็นขึ้นมาใหม่ทั้งชุด:</p>
+  <ul>
+    <li><strong>system prompt ที่ harness เขียนเอง</strong> — ชิ้นส่วนที่ทรงพลังที่สุดของทั้งระบบ · Claude Code ที่พี่ใช้ไม่ใช่ "Claude เปล่า ๆ" — ก่อนข้อความแรกของพี่จะถึงโมเดล harness แนบ "จดหมายงาน" ยาวหลายพันคำที่ทีมผู้สร้างเขียนไว้: คุณคือใคร ทำงานสไตล์ไหน ใช้เครื่องมือแต่ละตัวเมื่อไหร่ ข้อห้ามความปลอดภัยอะไรบ้าง · มันกำหนดบุคลิกและกติกาของ agent ทั้งตัว — และเป็นจุดเดียวกับที่ instructions ถาวรอย่าง <code>CLAUDE.md</code> ถูกเสียบเข้ามา (บทที่ 9)</li>
+    <li><strong>tool schemas</strong> — "เมนูเครื่องมือ" ที่บอกว่ามีอะไรให้ใช้ ใช้ยังไง (บทที่ 4)</li>
+    <li><strong>ประวัติการคุย + ผล tool ทุกรอบที่ผ่านมา</strong> — ส่วนเดียวที่โตขึ้นเรื่อย ๆ และจะกลายเป็นปัญหาหลักของบทที่ 3</li>
+  </ul>
+
+  <h3>2.3 แผนที่ของทั้งเล่ม — ทุกบทยึดจุดใดจุดหนึ่งของ loop</h3>
+  <p>ความลับของเล่มนี้: <strong>ทุกบทที่เหลือคือการปรับแต่งจุดใดจุดหนึ่งของวงจรข้างบน</strong> · ดูรูปนี้ค้างไว้ — มันคือแผนที่ที่เราจะเดินตลอดเล่ม:</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 396" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="agent loop เป็นวงกลมสี่ขั้น: รวบ context ส่งให้โมเดลคิด harness รันเครื่องมือ แล้วผลกลับเข้า context วนซ้ำ โดยมีป้ายบอกว่าแต่ละบทของเล่มนี้ยึดจุดไหนของวงจร และมีทางออกไปตอบผู้ใช้เมื่อโมเดลไม่ขอใช้เครื่องมือแล้ว">
+      <rect x="14" y="12" width="692" height="368" rx="14" fill="none" stroke="#54625f" stroke-width="1.2" stroke-dasharray="6 5"/>
+
+      <text x="320" y="30" text-anchor="middle" class="mono" fill="#c07415">บท 3 · งบ context ┊ บท 9 · ความรู้ถาวรเสียบตรงนี้</text>
+      <rect x="210" y="36" width="220" height="54" rx="10" fill="#e2eeea" stroke="#0e6e63" stroke-width="1.4"/>
+      <text x="320" y="58" text-anchor="middle" class="lbl">① รวบ context</text>
+      <text x="320" y="76" text-anchor="middle" class="sub">system prompt + tools + ประวัติ + ผลเก่า</text>
+
+      <rect x="479" y="36" width="146" height="44" rx="10" fill="#0e6e63"/>
+      <text x="552" y="63" text-anchor="middle" class="lbl-w">ตอบผู้ใช้ · จบงาน</text>
+
+      <rect x="460" y="170" width="168" height="54" rx="10" fill="#26302f"/>
+      <text x="544" y="192" text-anchor="middle" class="lbl-w">② โมเดลคิด</text>
+      <text x="544" y="210" text-anchor="middle" class="sub-w">ตอบข้อความ หรือ tool call</text>
+      <text x="544" y="248" text-anchor="middle" class="mono">บท 10 · subagent = loop ซ้อน loop</text>
+
+      <rect x="210" y="286" width="220" height="54" rx="10" fill="#f8ecd8" stroke="#c07415" stroke-width="1.4"/>
+      <text x="320" y="308" text-anchor="middle" class="lbl">③ harness รัน tool</text>
+      <text x="320" y="326" text-anchor="middle" class="sub">ผ่านด่านสิทธิ์ก่อนรันจริง</text>
+      <text x="320" y="360" text-anchor="middle" class="mono" fill="#c07415">บท 4 · ออกแบบ tools ┊ บท 6 · ด่านสิทธิ์</text>
+
+      <rect x="46" y="170" width="168" height="54" rx="10" fill="#fff" stroke="#5a8a5e" stroke-width="1.4"/>
+      <text x="130" y="192" text-anchor="middle" class="lbl">④ ผลกลับเข้า context</text>
+      <text x="130" y="210" text-anchor="middle" class="sub">แล้ววนรอบใหม่</text>
+      <text x="130" y="248" text-anchor="middle" class="mono" fill="#5a8a5e">บท 5 · ผล tool = feedback</text>
+
+      <path d="M 430 63 C 484 63, 520 106, 530 164" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 544 224 C 544 270, 500 313, 436 313" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 210 313 C 156 313, 130 276, 130 228" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 130 170 C 130 112, 156 63, 206 63" class="flow-t" marker-end="url(#ar-t)"/>
+
+      <path d="M 578 168 V 84" class="flow-a" marker-end="url(#ar-a)"/>
+      <text x="592" y="122" class="sub" fill="#c07415">ไม่ขอ tool =</text>
+      <text x="592" y="138" class="sub" fill="#c07415">บอกว่าเสร็จ</text>
+      <text x="592" y="154" class="mono" fill="#c07415">บท 8 · เสร็จจริง?</text>
+
+      <text x="330" y="188" text-anchor="middle" class="sub">วนรอบละไม่กี่วินาที</text>
+      <text x="330" y="206" text-anchor="middle" class="sub">agent ที่ทำงานเป็นชั่วโมง = วงนี้หลายร้อยรอบ</text>
+
+      <text x="30" y="372" class="mono">บท 7 · observability — มองเห็นทุกจุดของวง</text>
+      <text x="690" y="372" text-anchor="end" class="mono">บท 11 · evals — วัดทั้งวงซ้ำ ๆ</text>
+    </svg>
+    <figcaption><b>FIG 2.1</b> — แผนที่ประจำเล่ม: agent loop หนึ่งวง กับจุดที่แต่ละบทเข้าไปยึด · หลงบทไหน กลับมาดูรูปนี้</figcaption>
+  </figure>
+
+  <div class="use"><span class="t">คุณคือ harness — หลักการเล่มนี้ในเวอร์ชัน chat</span>ตอนใช้แชตธรรมดา ไม่มี harness มาช่วย เพราะ<strong>พี่นั่นแหละคือ harness</strong> ที่ทำทุกหน้าที่ด้วยมือ: เปิดแชตใหม่พร้อมสรุปงานที่ค้าง = <strong>compaction</strong> (บท 3) · แปะไฟล์เฉพาะตอนถึงจังหวะใช้ ไม่ยัดทั้งหมดแต่แรก = <strong>just-in-time context</strong> (บท 3) — และตัวพี่เองคือ "tool" ที่ไปหยิบข้อมูลมาให้ (บท 4) · ให้เกณฑ์แล้วสั่ง "ตรวจงานตัวเองตามเกณฑ์นี้ก่อนส่ง" = <strong>feedback loop</strong> (บท 5) · รู้ตัวว่า AI วนแก้ที่เดิม 3 รอบไม่หลุดสักที เลิกแล้วเปิดแชตใหม่ = <strong>stop condition</strong> (บท 8) · Custom Instructions / Projects ที่ตั้งค้างไว้ = <strong>memory</strong> (บท 9) · ส่วน permissions, observability, subagents, evals ไม่ต้องมี — เพราะพี่นั่งอ่านอยู่ทุกข้อความ อนุมัติเองทุกจังหวะ · ศาสตร์นี้จึงไม่ใช่เรื่องของคนสร้าง agent เท่านั้น — เข้าใจแล้ววิธีใช้ AI ประจำวันเปลี่ยนได้ทันที</div>
+
+  <div class="note"><span class="t">สรุปบทที่ 2</span>โมเดลไม่มีมือ — รับข้อความ พ่นข้อความ จบ · agent เกิดจาก harness วน loop: รวบ context → โมเดลตอบ (ข้อความ/tool call) → harness ตรวจสิทธิ์แล้วรันจริง → ผลกลับเข้า context → วนจนจบ · โมเดลแค่ "เขียนคำขอ" — คนกดปุ่มจริงคือ harness เสมอ · ทุกรอบ harness ประกอบ context ใหม่: system prompt ของ harness (ชิ้นทรงพลังสุด) + tool schemas + ประวัติ + ผล tool · ทุกบทที่เหลือของเล่ม = ปรับแต่งจุดใดจุดหนึ่งของ loop นี้</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH3 ============================ -->
+<section class="chapter" id="ch3">
+  <div class="ch-head">
+    <div class="row"><div class="num">03</div><h2>Context Management — จัดการทรัพยากรที่แพงที่สุด</h2></div>
+    <span class="chip" style="background:var(--l1-soft);color:var(--l1)">LEVEL 1 · เสาหลัก</span>
+  </div>
+
+  <p>เคยเจอไหมครับ — ปล่อย agent ทำงานยาว ๆ ผ่านไปสักพักมันเริ่ม "โง่ลง": ลืมข้อตกลงที่คุยกันตอนต้น กลับไปแก้ไฟล์ที่บอกแล้วว่าห้ามแตะ เรียกฟังก์ชันที่เพิ่งเปลี่ยนชื่อไปด้วยชื่อเก่า · โมเดลไม่ได้เสื่อมกลางทาง — แต่ <strong>"โต๊ะทำงาน" ของมันกำลังล้น</strong></p>
+
+  <h3>3.1 บนโต๊ะมีอะไรวางอยู่บ้าง</h3>
+  <p>เล่ม #07 เปรียบ context window เป็นโต๊ะทำงานที่วางของได้จำกัดไปแล้ว · ใน agent ของบนโต๊ะมี 4 กอง: <strong>system prompt</strong> (คงที่), <strong>tool schemas</strong> (คงที่ — แต่ต่อ MCP เยอะ ๆ ก็บวมได้), <strong>ประวัติการคุย</strong> และ <strong>ผลลัพธ์ tool</strong> — กองสุดท้ายคือตัวร้าย: อ่านไฟล์หนึ่งครั้งได้หลายพัน token, รันเทสต์หนึ่งรอบได้ log ยาวเหยียด และทุกอย่างกองอยู่บนโต๊ะ<em>ไปตลอดเซสชัน</em>ถ้าไม่มีใครจัดการ</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แถบ context budget สองแถบ: ก่อน compaction พื้นที่เกือบเต็มโดยผล tool เก่ากิน 44% ประวัติ 30% เหลือว่างแค่ 8% เมื่อใกล้เต็ม harness ทำ compaction สรุปประวัติและผลเก่าเป็นย่อสั้น แถบหลัง compaction จึงเหลือพื้นที่ว่างมากสำหรับงานต่อ">
+      <text x="24" y="30" class="mono">ก่อน compaction — งานเดินมา 40 นาที</text>
+      <rect x="24" y="44" width="54" height="42" fill="#0a5048"/><text x="51" y="70" text-anchor="middle" class="sub-w">8%</text>
+      <rect x="78" y="44" width="67" height="42" fill="#0e6e63"/><text x="111" y="70" text-anchor="middle" class="sub-w">10%</text>
+      <rect x="145" y="44" width="202" height="42" fill="#c07415"/><text x="246" y="70" text-anchor="middle" class="lbl-w">ประวัติ 30%</text>
+      <rect x="347" y="44" width="296" height="42" fill="#b3402e"/><text x="495" y="70" text-anchor="middle" class="lbl-w">ผล tool เก่า ๆ 44%</text>
+      <rect x="643" y="44" width="53" height="42" fill="#f2ede3" stroke="#ddd5c6" stroke-dasharray="4 3"/><text x="669" y="70" text-anchor="middle" class="sub">ว่าง</text>
+      <text x="637" y="40" text-anchor="end" class="mono" fill="#b3402e">ใกล้เต็ม → ต้องบีบ</text>
+
+      <rect x="24" y="104" width="11" height="11" rx="2" fill="#0a5048"/><text x="41" y="115" class="sub">system prompt</text>
+      <rect x="150" y="104" width="11" height="11" rx="2" fill="#0e6e63"/><text x="167" y="115" class="sub">tool schemas</text>
+      <rect x="268" y="104" width="11" height="11" rx="2" fill="#c07415"/><text x="285" y="115" class="sub">ประวัติการคุย</text>
+      <rect x="390" y="104" width="11" height="11" rx="2" fill="#b3402e"/><text x="407" y="115" class="sub">ผล tool — ตัวใหญ่สุด มักถูกมองข้าม</text>
+
+      <path d="M 300 130 V 172" class="flow-a" marker-end="url(#ar-a)"/>
+      <text x="316" y="156" class="sub" fill="#c07415">compaction: สรุปประวัติ + ผลเก่า เหลือย่อสั้น ๆ แล้วเริ่มโต๊ะใหม่</text>
+
+      <text x="24" y="196" class="mono">หลัง compaction — โต๊ะโล่ง งานเดินต่อ</text>
+      <rect x="24" y="210" width="54" height="42" fill="#0a5048"/><text x="51" y="236" text-anchor="middle" class="sub-w">8%</text>
+      <rect x="78" y="210" width="67" height="42" fill="#0e6e63"/><text x="111" y="236" text-anchor="middle" class="sub-w">10%</text>
+      <rect x="145" y="210" width="100" height="42" fill="#e2eeea" stroke="#0e6e63"/><text x="195" y="236" text-anchor="middle" class="sub" fill="#0a5048">สรุป ~7%</text>
+      <rect x="245" y="210" width="451" height="42" fill="#f2ede3" stroke="#ddd5c6" stroke-dasharray="4 3"/><text x="470" y="236" text-anchor="middle" class="sub">พื้นที่สำหรับงานที่เหลือ</text>
+      <text x="24" y="280" class="sub">สรุปที่ดีเก็บ: การตัดสินใจ + เหตุผล + สถานะล่าสุด — ไม่ใช่เก็บบทสนทนาดิบ</text>
+    </svg>
+    <figcaption><b>FIG 3.1</b> — งบ context ถูกใช้ไปกับอะไร และ compaction เข้ามาเกิดตรงไหน · ตัวกินพื้นที่ตัวจริงคือผล tool เก่า ๆ ที่ไม่มีใครใช้แล้ว</figcaption>
+  </figure>
+
+  <h3>3.2 ทำไม context ยาวถึงเป็นปัญหา</h3>
+  <ul>
+    <li><strong>แพง</strong> — โมเดลไม่ได้ "จำ" อะไรข้ามรอบ ทุกรอบของ loop คือการส่ง context <em>ทั้งก้อน</em> เข้าไปใหม่ · ประวัติ 100k token × วน 200 รอบ = จ่ายมหาศาล (caching ช่วยได้ส่วนหนึ่ง แต่หลักการนี้ไม่เปลี่ยน)</li>
+    <li><strong>ช้า</strong> — context ยิ่งยาว โมเดลยิ่งใช้เวลาประมวลนานขึ้นทุกรอบ</li>
+    <li><strong>จำเลอะ</strong> — อาการที่วงการเรียก <em>context rot</em>: ยิ่งยาว ความสนใจของโมเดลยิ่งเบลอ ข้อมูลที่อยู่กลาง ๆ ถูกมองข้าม (lost in the middle) ความผิดพลาดเก่า ๆ ที่ค้างอยู่ก็ลากงานใหม่ให้เพี้ยนตาม</li>
+  </ul>
+  <p>ตลกร้ายคือสามข้อนี้มาพร้อมกัน: <strong>ยิ่งปล่อยให้ยาว เรายิ่งจ่ายแพงขึ้นเพื่อผลลัพธ์ที่แย่ลง</strong> — context จึงเป็นทรัพยากรที่ต้องบริหาร ไม่ใช่ถังที่เทอะไรลงไปก็ได้</p>
+
+  <h3>3.3 เทคนิคหลักสามตัว</h3>
+  <p><strong>① Compaction / summarization</strong> — พอใกล้เต็ม harness สรุปประวัติเก่าให้เหลือย่อสั้น ๆ (ทำอะไรไปแล้ว ตกลงอะไรกันไว้ กำลังทำอะไรอยู่) แล้วเริ่มหน้าต่างใหม่ด้วยสรุปนั้น · ราคาที่จ่ายคือรายละเอียดหาย — ศิลปะอยู่ที่สรุปให้เก็บ "การตัดสินใจและเหตุผล" ไม่ใช่เก็บคำพูดดิบ ๆ</p>
+  <p><strong>② Just-in-time retrieval</strong> — อย่ายัดข้อมูลล่วงหน้า "เผื่อได้ใช้" ให้ agent <em>ค้นเมื่อต้องใช้</em>ผ่านเครื่องมือ (ค้นไฟล์, grep, ค้นเอกสาร) · นี่คือเหตุผลที่ Claude Code ไม่โหลดทั้ง repo เข้า context แต่ให้เครื่องมือค้นแทน — จ่ายเฉพาะสิ่งที่หยิบมาใช้จริง</p>
+  <p><strong>③ ตัดผล tool ยาว ๆ ตั้งแต่ต้นทาง</strong> — ผล tool ทุกตัวอักษรคือ "ค่าเช่ารายเดือน" ที่ต้องแบกไปทุกรอบที่เหลือ · harness ที่ดีจึง truncate ไฟล์ยาว แบ่งหน้าให้ขอเพิ่มทีหลัง และคืนเฉพาะส่วนที่เกี่ยว (เรื่องนี้โยงตรงเข้าบทที่ 4 — การออกแบบผลลัพธ์ของ tool)</p>
+
+  <h3>3.4 RAG ที่พี่รู้จัก คือ special case ของเรื่องนี้</h3>
+  <p>เล่ม #07 สอน grounding/RAG ไว้แล้ว — ระบบค้นเอกสารที่เกี่ยวแล้วแปะให้โมเดล<em>ก่อน</em>ตอบ · มองผ่านเลนส์เล่มนี้ RAG คือ just-in-time retrieval แบบ <strong>push</strong>: ฝั่งระบบเดาว่าโมเดลต้องใช้อะไรแล้วป้อนให้ · agent ยุคนี้ขยับไปอีกขั้นเป็นแบบ <strong>pull</strong>: โมเดลถือเครื่องมือค้นเอง ตัดสินใจเองว่าจะค้นอะไร เมื่อไหร่ ค้นซ้ำกี่รอบ — วงการเรียก <em>agentic search</em> · หลักการเดียวกัน แต่ย้ายคนตัดสินใจจากระบบไปที่ตัว agent</p>
+
+  <div class="note"><span class="t">กฎหัวแม่มือของบทนี้</span>ทุก token ที่อยู่ใน context ต้องตอบได้ว่า <strong>"มันอยู่ตรงนั้นทำไม"</strong> — ถ้าคำตอบคือ "เผื่อได้ใช้" หรือ "มันค้างมาจากงานเมื่อกี้" นั่นคือขยะที่ทั้งแพงและทำให้โง่ลง</div>
+
+  <div class="note"><span class="t">สรุปบทที่ 3</span>context = โต๊ะทำงานที่ทุกอย่างต้องจ่ายค่าเช่าทุกรอบ · ตัวกินพื้นที่ตัวจริงคือผล tool เก่า ๆ · ยาวเกิน = แพง + ช้า + จำเลอะ (context rot / lost in the middle) · สามเทคนิคหลัก: compaction (สรุปแล้วเริ่มใหม่), just-in-time retrieval (ค้นเมื่อใช้ ไม่ยัดล่วงหน้า), ตัดผล tool ตั้งแต่ต้นทาง · RAG คือ special case แบบ push — agent ยุคนี้ pull เอง</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH4 ============================ -->
+<section class="chapter" id="ch4">
+  <div class="ch-head">
+    <div class="row"><div class="num">04</div><h2>Tool Design — ออกแบบ API ให้ผู้ใช้ที่เป็น AI</h2></div>
+    <span class="chip" style="background:var(--l1-soft);color:var(--l1)">LEVEL 1 · เสาหลัก</span>
+  </div>
+
+  <p>ทีมหนึ่งต่อ MCP server เข้า agent อย่างภูมิใจ — เครื่องมือ 60 ตัวพร้อมใช้ · ผลคือ agent กลับ<strong>โง่ลง</strong>: เลือกเครื่องมือผิด สับสนระหว่าง <code>get_user</code> กับ <code>fetch_user</code> ที่ต่างกันนิดเดียว แถมจ่ายค่า context ให้ schema ที่แทบไม่เคยถูกเรียก · บทนี้ว่าด้วยศาสตร์ที่ฟังดูคุ้นแต่กติกาใหม่: <strong>ออกแบบ API ที่ "ผู้ใช้" เป็น AI</strong></p>
+
+  <h3>4.1 tool หนึ่งตัว = สัญญา 3 ส่วน</h3>
+  <p>เครื่องมือหนึ่งตัวที่ harness ประกาศให้โมเดลเห็น ประกอบด้วย <strong>name</strong> (ชื่อ), <strong>description</strong> (คำอธิบาย), และ <strong>input schema</strong> (ฟอร์มที่ต้องกรอก) · จุดที่คนมองข้าม: <strong>description คือ prompt ที่ฝังถาวร</strong> — มันนั่งอยู่ใน context ทุกรอบ และโมเดลอ่านมันทุกครั้งที่ตัดสินใจว่าจะหยิบเครื่องมือไหน เขียน description ห่วย = เขียน prompt ห่วยที่ส่งซ้ำอัตโนมัติตลอดกาล</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ซ้าย: กายวิภาคของ tool contract สามส่วนคือ name, description ซึ่งเป็น prompt ที่ฝังถาวร และ input schema · ขวา: เส้นทางไปกลับของ tool call จากโมเดล ผ่าน harness ที่ตรวจ schema และสิทธิ์ ไปรันกับระบบจริง แล้วผลลัพธ์กลับเข้า context">
+      <rect x="20" y="26" width="310" height="280" rx="12" fill="#fff" stroke="#ddd5c6"/>
+      <text x="36" y="52" class="mono">tool หนึ่งตัว = สัญญา 3 ส่วน</text>
+      <rect x="36" y="64" width="278" height="52" rx="8" fill="#f2ede3"/>
+      <text x="48" y="86" class="mono" fill="#222b2e">name: search_customer_orders</text>
+      <text x="48" y="104" class="sub">ชื่อบอก intent ของงาน ไม่ใช่ชื่อ endpoint</text>
+      <rect x="36" y="128" width="278" height="94" rx="8" fill="#f8ecd8" stroke="#c07415"/>
+      <text x="48" y="150" class="mono" fill="#c07415">description ← prompt ที่ฝังถาวร</text>
+      <text x="48" y="170" class="sub">"ค้นออร์เดอร์จากชื่อ/อีเมลลูกค้า</text>
+      <text x="48" y="188" class="sub">ใช้เมื่อถูกถามสถานะการสั่งซื้อ · คืน ≤20 แถว"</text>
+      <text x="48" y="210" class="sub" fill="#c07415">ทำอะไร · ใช้เมื่อไหร่ · ขอบเขต — ครบในนี้</text>
+      <rect x="36" y="234" width="278" height="58" rx="8" fill="#f2ede3"/>
+      <text x="48" y="256" class="mono" fill="#222b2e">input_schema: {customer*, status?, page?}</text>
+      <text x="48" y="276" class="sub">ฟอร์มที่โมเดลกรอก — required/enum ต้องชัด</text>
+
+      <rect x="400" y="26" width="140" height="44" rx="9" fill="#26302f"/><text x="470" y="53" text-anchor="middle" class="lbl-w">โมเดล</text>
+      <path d="M 470 70 V 104" class="flow-t" marker-end="url(#ar-t)"/>
+      <text x="484" y="92" class="mono" fill="#0a5048">tool call (JSON)</text>
+      <rect x="400" y="108" width="140" height="52" rx="9" fill="#e2eeea" stroke="#0e6e63"/><text x="470" y="129" text-anchor="middle" class="lbl">harness</text><text x="470" y="147" text-anchor="middle" class="sub">ตรวจ schema + สิทธิ์</text>
+      <path d="M 470 160 V 196" class="flow-t" marker-end="url(#ar-t)"/>
+      <text x="484" y="182" class="mono" fill="#0a5048">รันจริง</text>
+      <rect x="400" y="200" width="140" height="44" rx="9" fill="#fff" stroke="#54625f"/><text x="470" y="227" text-anchor="middle" class="lbl">API · ไฟล์ · เชลล์</text>
+      <path d="M 542 222 C 668 210, 664 60, 548 42" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <text x="648" y="128" text-anchor="middle" class="sub" fill="#c07415">ผลลัพธ์กลับ</text>
+      <text x="648" y="144" text-anchor="middle" class="sub" fill="#c07415">เข้า context</text>
+      <text x="470" y="284" text-anchor="middle" class="sub">ทุกตัวอักษรของผลลัพธ์ = ค่าเช่า context</text>
+      <text x="470" y="302" text-anchor="middle" class="sub">ที่จ่ายซ้ำทุกรอบที่เหลือ (บท 3)</text>
+    </svg>
+    <figcaption><b>FIG 4.1</b> — สัญญา 3 ส่วนของ tool กับเส้นทางไป-กลับใน loop · โมเดลเขียนแค่คำขอ — harness เป็นคนตรวจและรันจริงเสมอ</figcaption>
+  </figure>
+
+  <h3>4.2 ดี vs แย่ — คู่เดียวเห็นครบ</h3>
+  <div class="prompt-label" style="color:var(--red)">✗ tool ที่ออกแบบตาม API ดิบ</div>
+  <pre><code>{ "name": <span class="bd">"api_v2_query_exec"</span>,            <span class="cm">← ชื่อบอกแค่ "รันคิวรี" — งานอะไร? เมื่อไหร่ควรใช้?</span>
+  "description": <span class="bd">"Executes query against the v2 endpoint"</span>,
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "q":    { "type": "string" },      <span class="cm">← q คืออะไร? SQL? ข้อความ? format ไหน?</span>
+      "opts": { "type": "string",
+                "description": <span class="bd">"JSON-encoded options"</span> } } } }
+                                         <span class="cm">← JSON ซ้อนใน string — จุดพังคลาสสิก</span></code></pre>
+  <div class="prompt-label" style="color:var(--teal-deep)">✓ tool ที่ออกแบบตาม workflow</div>
+  <pre><code>{ "name": <span class="gd">"search_customer_orders"</span>,
+  "description": <span class="gd">"ค้นออร์เดอร์ของลูกค้าจากชื่อหรืออีเมล
+      ใช้เมื่อผู้ใช้ถามถึงสถานะหรือประวัติการสั่งซื้อ
+      คืนไม่เกิน 20 รายการ (ใหม่→เก่า) — อยากได้หน้าถัดไปส่ง page เพิ่ม"</span>,
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "customer": { "type": "string", "description": "ชื่อหรืออีเมลลูกค้า" },
+      "status":   { "type": "string", <span class="gd">"enum": ["paid","shipped","refunded"]</span> },
+      "page":     { "type": "integer", "default": 1 }
+    },
+    <span class="gd">"required": ["customer"]</span> } }</code></pre>
+
+  <h3>4.3 หลักออกแบบสามข้อ</h3>
+  <ul>
+    <li><strong>ออกแบบตาม workflow ไม่ใช่ตาม API ดิบ</strong> — นักพัฒนาที่เป็นคนอ่าน docs ได้ จำ state ข้ามหน้าจอได้ แต่โมเดลรู้เท่าที่ description ใน context บอก · เครื่องมือที่ดีคือ "หนึ่ง intent จบในตัว" (ค้นออร์เดอร์ของลูกค้าคนนี้) ไม่ใช่ "ประตูไปยัง endpoint" ที่ผู้ใช้ต้องประกอบเอง 3 จังหวะ</li>
+    <li><strong>จำนวนพอดี ไม่ใช่ 100 ชิ้นจิ๋ว</strong> — ทุก schema กิน context (บท 3) และทุกตัวเลือกที่เพิ่มคือโอกาสเลือกผิดที่เพิ่ม โดยเฉพาะเครื่องมือที่ทับซ้อนกันเอง · เครื่องมือน้อยตัวแต่ทรงพลัง ชนะเครื่องมือเยอะแต่จิ๋วเกือบทุกครั้ง</li>
+    <li><strong>ผลลัพธ์ต้องกระชับ</strong> — เพราะผลลัพธ์กลายเป็น context ทันที: คืนเฉพาะฟิลด์ที่ใช้ มี pagination ตัด log ให้เหลือท่อนที่เกี่ยว · tool ที่ dump ข้อมูลดิบ 5,000 บรรทัดคือ tool ที่สั่งให้ agent โง่ลงในอีก 10 รอบข้างหน้า</li>
+  </ul>
+
+  <h3>4.4 error message = prompt ขากลับ</h3>
+  <p>เมื่อ tool พัง ข้อความ error จะถูกยัดกลับเข้า context และโมเดล<em>จะอ่านมันแน่นอน</em>เพื่อวางแผนรอบถัดไป — error จึงไม่ใช่ log แต่คือ <strong>prompt ที่เราส่งให้โมเดลตอนมันกำลังหลงทาง</strong>:</p>
+  <pre><code><span class="bd">✗ Error: 400 Bad Request</span>
+  <span class="cm">โมเดลไปต่อไม่ถูก → เดามั่ว หรือวนเรียกซ้ำท่าเดิม (บท 8)</span>
+
+<span class="gd">✓ Error: ไม่พบลูกค้าชื่อ "สมชาย จ."
+  ชื่ออาจสะกดไม่ตรงกับในระบบ — ลองอย่างใดอย่างหนึ่ง:
+  · ค้นด้วยอีเมลแทน: search_customer_orders(customer="somchai@...")
+  · หรือเรียก list_customers(query="สมชาย") หา id ที่ถูกก่อน</span>
+  <span class="cm">บอกว่าผิดอะไร + แก้ยังไง → รอบถัดไปแก้เกมถูกทันที</span></code></pre>
+
+  <h3>4.5 MCP — มาตรฐานเปิดของการเสียบเครื่องมือ</h3>
+  <p>เล่ม #07 แนะนำ <strong>MCP</strong> (Model Context Protocol) ไว้ว่าเป็น "ปลั๊ก USB" ที่ต่อ AI เข้ากับแอปและข้อมูลจริง · มุมของคนออกแบบ harness: MCP แยก<strong>คนสร้างเครื่องมือ</strong>ออกจาก<strong>คนสร้าง harness</strong> — เขียน server ครั้งเดียว เสียบได้กับทุก harness ที่พูดโปรโตคอลนี้ ไม่ต้องผูกกับ vendor ไหน · แต่ระวัง: MCP ทำให้<em>เสียบง่ายขึ้น</em> ไม่ได้ทำให้<em>ออกแบบดีขึ้น</em> — server ที่ดัมพ์ API ดิบทั้งชุด 60 endpoints คือตัวอย่างคลาสสิกของสิ่งที่บทนี้เตือนทั้งบท</p>
+
+  <div class="note"><span class="t">สรุปบทที่ 4</span>tool = สัญญา 3 ส่วน (name, description, schema) — description คือ prompt ที่ฝังถาวร · ออกแบบตาม workflow ไม่ใช่ API ดิบ · จำนวนพอดี — ทุก schema กิน context ทุกตัวเลือกเพิ่มโอกาสพลาด · ผลลัพธ์กระชับเพราะมันกลายเป็น context · error ที่ดี = prompt ขากลับที่สอนวิธีแก้ · MCP ทำให้เสียบง่าย แต่หลักออกแบบทั้งบทนี้ยังใช้เต็ม ๆ</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH5 ============================ -->
+<section class="chapter" id="ch5">
+  <div class="ch-head">
+    <div class="row"><div class="num">05</div><h2>Feedback Loops — ให้ agent ตรวจงานตัวเองได้</h2></div>
+    <span class="chip" style="background:var(--l1-soft);color:var(--l1)">LEVEL 1 · เสาหลัก</span>
+  </div>
+
+  <p>คำถามชวนคิด: ทำไม agent เขียน<em>โค้ด</em>ถึงไปได้ไกลกว่า agent เขียน<em>บทความ</em> ทั้งที่ภาษาไทย/อังกฤษน่าจะง่ายกว่าภาษาโปรแกรม? · คำตอบไม่เกี่ยวกับความฉลาดเลย: <strong>โค้ดมีกรรมการในตัว</strong> — compiler บอกทันทีว่า syntax พัง เทสต์บอกทันทีว่า logic เพี้ยน ส่วนบทความไม่มีอะไรบอกว่า "ย่อหน้านี้อ่อน" จนกว่าคนจะอ่าน</p>
+  <p>นี่คือบทที่เป็นแก่นที่สุดของเล่ม: <strong>agent ที่ทำงานยาว ๆ ได้ คือ agent ที่รู้เองว่าผิด</strong></p>
+
+  <h3>5.1 open loop vs closed loop</h3>
+  <p>ลองคิดเลขง่าย ๆ: สมมติโมเดลพลาดแค่ 5% ต่อขั้น งานที่ต้องทำ 20 ขั้นติดกันแบบไม่มีการตรวจเลย โอกาสรอดทั้งสาย = 0.95²⁰ ≈ <strong>36%</strong> — ยิ่งงานยาว ยิ่งเข้าใกล้ศูนย์ · แต่ถ้าทุกขั้นถูกตรวจและแก้ก่อนไปต่อ ความผิดพลาด<strong>ไม่ทบต้น</strong> — งานยาวแค่ไหนก็เดินได้ นี่คือเหตุผลเชิงคณิตศาสตร์ว่าทำไม closed loop เปลี่ยนเกม</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="เปรียบเทียบ open loop ที่ทำงานต่อเนื่องโดยไม่ตรวจ ความผิดพลาดเล็ก ๆ สะสมจนคนมาเจอตอนจบซึ่งแก้แพงที่สุด กับ closed loop ที่ทำ ตรวจกับ verifier แก้ แล้ววนใหม่ ความผิดถูกดักทันทีในรอบนั้น">
+      <text x="24" y="26" font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1" fill="#54625f">OPEN LOOP · ทำเสร็จแล้วส่งเลย</text>
+      <rect x="24" y="46" width="72" height="38" rx="8" fill="#fff" stroke="#ddd5c6"/><text x="60" y="70" text-anchor="middle" class="lbl">ขั้น 1</text>
+      <path d="M 100 65 H 128" class="flow" marker-end="url(#ar)"/>
+      <rect x="132" y="46" width="72" height="38" rx="8" fill="#fff" stroke="#ddd5c6"/><text x="168" y="70" text-anchor="middle" class="lbl">ขั้น 2</text>
+      <path d="M 208 65 H 236" class="flow" marker-end="url(#ar)"/>
+      <rect x="240" y="46" width="72" height="38" rx="8" fill="#fff" stroke="#ddd5c6"/><text x="276" y="70" text-anchor="middle" class="lbl">ขั้น 3…</text>
+      <text x="60" y="104" text-anchor="middle" class="sub" fill="#b3402e">✗</text>
+      <text x="168" y="104" text-anchor="middle" class="sub" fill="#b3402e">✗ ✗</text>
+      <text x="276" y="104" text-anchor="middle" class="sub" fill="#b3402e">✗ ✗ ✗</text>
+      <text x="168" y="124" text-anchor="middle" class="sub">พลาดเล็ก ๆ สะสมเงียบ ๆ</text>
+      <path d="M 276 132 V 158" class="flow-r" marker-end="url(#ar-r)"/>
+      <rect x="60" y="162" width="270" height="56" rx="9" fill="#f6e3de" stroke="#b3402e"/>
+      <text x="195" y="186" text-anchor="middle" class="lbl" fill="#b3402e">คนมาเจอบั๊กตอนจบ</text>
+      <text x="195" y="204" text-anchor="middle" class="sub">แก้ตอนนี้แพงสุด — ต้องย้อนทั้งสาย</text>
+
+      <line x1="360" y1="16" x2="360" y2="254" stroke="#ddd5c6"/>
+
+      <text x="396" y="26" font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1" fill="#54625f">CLOSED LOOP · ทำ → ตรวจ → แก้ → วน</text>
+      <rect x="480" y="42" width="150" height="40" rx="8" fill="#fff" stroke="#ddd5c6"/><text x="555" y="67" text-anchor="middle" class="lbl">ลงมือทำขั้นนั้น</text>
+      <path d="M 555 82 V 108" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="480" y="112" width="150" height="48" rx="8" fill="#e2eeea" stroke="#0e6e63"/><text x="555" y="132" text-anchor="middle" class="lbl">ตรวจกับ verifier</text><text x="555" y="150" text-anchor="middle" class="sub">เทสต์ · compiler · lint</text>
+      <path d="M 480 132 C 420 126, 420 66, 476 58" class="flow-r dash" marker-end="url(#ar-r)"/>
+      <text x="428" y="88" text-anchor="middle" class="sub" fill="#b3402e">ไม่ผ่าน</text>
+      <text x="428" y="104" text-anchor="middle" class="sub" fill="#b3402e">→ แก้ วนใหม่</text>
+      <path d="M 555 160 V 186" class="flow-t" marker-end="url(#ar-t)"/>
+      <text x="569" y="178" class="mono" fill="#0a5048">ผ่าน ✓</text>
+      <rect x="480" y="190" width="150" height="40" rx="8" fill="#0e6e63"/><text x="555" y="215" text-anchor="middle" class="lbl-w">ส่งงานที่ตรวจแล้ว</text>
+      <text x="540" y="254" text-anchor="middle" class="sub">ความผิดถูกดักในรอบนั้นทันที — ไม่ทบต้น</text>
+    </svg>
+    <figcaption><b>FIG 5.1</b> — open loop: ความผิดสะสมจนไปโผล่ตอนจบ · closed loop: verifier ดักไว้ทุกขั้น — งานยาวแค่ไหนก็เดินได้</figcaption>
+  </figure>
+
+  <h3>5.2 "ประสาทสัมผัส" ของ agent</h3>
+  <p>โมเดลมองไม่เห็นโลก — สิ่งที่ทำหน้าที่เป็นตา หู และปลายประสาทของมันคือเครื่องตรวจที่ harness จัดให้:</p>
+  <ul>
+    <li><strong>เทสต์</strong> — บอกว่า logic ถูกตามสเปกไหม (แม่นสุดถ้าเทสต์ดี)</li>
+    <li><strong>compiler / type checker</strong> — บอกทันทีว่าโค้ดประกอบร่างไม่ติด</li>
+    <li><strong>linter / formatter</strong> — บอกว่าผิดกติกาสไตล์ตรงไหน</li>
+    <li><strong>screenshot / preview</strong> — งาน UI: ให้ agent เห็นภาพที่ render จริง ไม่ใช่จินตนาการจากโค้ด</li>
+    <li><strong>log / exit code</strong> — บอกว่ารันจริงแล้วเกิดอะไรขึ้น</li>
+  </ul>
+  <p>สังเกตว่าทั้งหมดนี้ไม่มีอะไรเป็น AI เลย — เป็นเครื่องมือธรรมดาที่วงการมีอยู่แล้ว · งานของ harness engineer ไม่ใช่ประดิษฐ์ verifier ใหม่ แต่คือ<strong>ต่อสายประสาทพวกนี้เข้า loop</strong> ให้ agent เรียกใช้เองได้และเห็นผลเต็ม ๆ</p>
+
+  <h3>5.3 verifier ที่ดีต้องมีสามคุณสมบัติ</h3>
+  <ul>
+    <li><strong>เชื่อได้</strong> — false pass (บอกว่าผ่านทั้งที่พัง) อันตรายกว่าไม่มี verifier เพราะ agent จะเดินหน้าอย่างมั่นใจบนของพัง · เทสต์ห่วย ๆ ที่ mock จนไม่เหลืออะไรจริง = ยาพิษ</li>
+    <li><strong>เร็ว</strong> — closed loop ได้ผลจากการ<em>วนบ่อย</em> ถ้าเทสต์รัน 20 นาที agent จะวนได้แค่ไม่กี่รอบ · เทสต์ย่อยที่รันเป็นวินาทีมีค่ากับ agent มากกว่า suite ใหญ่ที่สมบูรณ์แต่ช้า</li>
+    <li><strong>agent เรียกเองได้</strong> — ต้องอยู่ในรูปคำสั่ง/tool ที่มันกดเองได้ทุกเมื่อ ไม่ใช่รอคนมากดให้ — ไม่งั้นก็กลับไปเป็น open loop ที่มีพิธีกรรมเพิ่ม</li>
+  </ul>
+
+  <h3>5.4 กฎที่พยากรณ์อนาคตได้: งานเดินไกลเท่าที่ verifier พาไป</h3>
+  <p>อยากรู้ว่า agent จะทำงานไหนได้ดี <strong>อย่าถามว่าโมเดลฉลาดแค่ไหน — ถามว่างานนั้นมี verifier ดีแค่ไหน</strong>:</p>
+  <table>
+    <tr><th>งาน</th><th>verifier</th><th>agent ทำงานยาวได้แค่ไหน</th></tr>
+    <tr><td>แก้บั๊กใน repo ที่มีเทสต์ครบ</td><td>เทสต์ + compiler — แม่น เร็ว เรียกเองได้</td><td><b>เป็นชั่วโมงได้สบาย</b></td></tr>
+    <tr><td>เขียนฟีเจอร์ใหม่</td><td>ปานกลาง — ให้เขียนเทสต์ก่อนแล้วค่อยทำ ช่วยได้มาก</td><td>ยาวพอควร ถ้าวางเกณฑ์ก่อน</td></tr>
+    <tr><td>เขียนเอกสาร/แปล/วิเคราะห์</td><td>อ่อน — ใช้ AI ตรวจ AI ได้แต่เชื่อได้น้อยกว่าเทสต์</td><td>สั้น — ควรมีคนตรวจเป็นระยะ</td></tr>
+    <tr><td>งานรสนิยม (ดีไซน์, โทนภาษา)</td><td>แทบไม่มี — เกณฑ์อยู่ในหัวคน</td><td>สั้นมาก — คนต้องอยู่ใน loop</td></tr>
+  </table>
+  <p>บทต่อ ๆ ไปจะเจอ verifier โผล่มาเป็นพระเอกซ้ำ ๆ: เป็นเงื่อนไข "เสร็จจริง" ของบทที่ 8, เป็นหัวใจของ evals บทที่ 11 และเป็น<strong>สิ่งแรกที่ต้องออกแบบ</strong>เมื่อสร้าง harness เองในบทที่ 13</p>
+
+  <div class="note"><span class="t">สรุปบทที่ 5</span>agent ทำงานยาวได้ = รู้เองว่าผิด · open loop ความผิดทบต้น (0.95²⁰ ≈ 36%) — closed loop ดักทุกขั้น ไม่ทบต้น · ประสาทสัมผัส: เทสต์, compiler, linter, screenshot, log — ของธรรมดาที่ต่อเข้า loop · verifier ที่ดี: เชื่อได้ เร็ว agent เรียกเองได้ · งานไหน verifier ดี งานนั้น agent ไปได้ไกล — กฎนี้พยากรณ์ได้แม่นกว่าถามว่าโมเดลรุ่นไหน</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH6 ============================ -->
+<section class="chapter" id="ch6">
+  <div class="ch-head">
+    <div class="row"><div class="num">06</div><h2>Guardrails &amp; Permissions — ให้อิสระแค่ไหนดี</h2></div>
+    <span class="chip" style="background:var(--l2-soft);color:var(--l2)">LEVEL 2 · คุมให้อยู่</span>
+  </div>
+
+  <p>agent ขอรัน <code>rm -rf node_modules</code> — ให้ผ่านไหม? แล้ว <code>git push --force</code> ล่ะ? แล้วส่งอีเมลหาลูกค้า 2,000 คน? · ทุกคนรู้สึกได้ว่าสามคำถามนี้ "หนัก" ไม่เท่ากัน แต่พอต้องออกแบบเป็นระบบ เส้นแบ่งอยู่ตรงไหน — บทนี้ให้<strong>กรอบคิด</strong> ไม่ใช่รายการท่องจำ</p>
+
+  <h3>6.1 สองแกนที่ตัดสินทุกอย่าง: blast radius × reversibility</h3>
+  <ul>
+    <li><strong>blast radius (รัศมีความเสียหาย)</strong> — ถ้าพลาด ความเสียหายกระจายถึงไหน: ในโฟลเดอร์เดียว? ทั้งเครื่อง? หรือทะลุออกไปถึงคนอื่น/ระบบ production?</li>
+    <li><strong>reversibility (ย้อนกลับได้ไหม)</strong> — แก้ไฟล์ใน git ย้อนได้เสมอ · ลบไฟล์นอก version control ย้อนยาก · อีเมลที่ส่งแล้ว ย้อนไม่ได้เลย</li>
+  </ul>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="เมทริกซ์สองแกน: แกนนอนคือความยากในการย้อนกลับ แกนตั้งคือรัศมีความเสียหาย แบ่งเป็นสี่โซน: ย้อนง่ายวงแคบทำเลยไม่ต้องถาม เช่นอ่านไฟล์และรันเทสต์ · ย้อนง่ายวงกว้างทำได้แต่บอกและทำใน sandbox เช่นแก้หลายไฟล์บน branch · ย้อนยากวงแคบต้องถามก่อน เช่นลบไฟล์นอก git · ย้อนยากวงกว้างห้ามหรือให้คนทำเอง เช่น push force และแตะฐานข้อมูล production">
+      <rect x="90" y="30" width="300" height="120" fill="#e2eeea"/>
+      <rect x="390" y="30" width="300" height="120" fill="#f6e3de"/>
+      <rect x="90" y="150" width="300" height="120" fill="#e6efe4"/>
+      <rect x="390" y="150" width="300" height="120" fill="#f8ecd8"/>
+      <text x="106" y="56" class="lbl" fill="#0a5048">ทำได้ แต่บอกให้รู้ + อยู่ใน sandbox</text>
+      <text x="106" y="78" class="mono">แก้ 30 ไฟล์บน branch (git ย้อนได้)</text>
+      <text x="106" y="96" class="mono">รัน migration บนฐานข้อมูลทดสอบ</text>
+      <text x="406" y="56" class="lbl" fill="#b3402e">ห้าม / คนทำเองเท่านั้น</text>
+      <text x="406" y="78" class="mono">rm -rf นอก repo · git push --force</text>
+      <text x="406" y="96" class="mono">อีเมลหาลูกค้าทั้งลิสต์ · แตะ prod DB</text>
+      <text x="106" y="176" class="lbl" fill="#5a8a5e">ทำเลย ไม่ต้องถาม</text>
+      <text x="106" y="198" class="mono">อ่านไฟล์ · ls · grep · รันเทสต์</text>
+      <text x="106" y="216" class="mono">ทุกอย่างที่แค่ "ดู" ไม่ "แตะ"</text>
+      <text x="406" y="176" class="lbl" fill="#c07415">ถามก่อนทุกครั้ง</text>
+      <text x="406" y="198" class="mono">ลบไฟล์ที่ git ไม่คุม · ติดตั้ง package</text>
+      <text x="406" y="216" class="mono">ส่งข้อความหาคนหนึ่งคน</text>
+      <line x1="390" y1="30" x2="390" y2="270" stroke="#faf7f1" stroke-width="3"/>
+      <line x1="90" y1="150" x2="690" y2="150" stroke="#faf7f1" stroke-width="3"/>
+      <path d="M 90 292 H 686" class="flow" marker-end="url(#ar)"/>
+      <text x="390" y="316" text-anchor="middle" class="sub">ย้อนกลับ: ง่าย ────→ ยาก</text>
+      <path d="M 64 270 V 34" class="flow" marker-end="url(#ar)"/>
+      <text x="44" y="150" text-anchor="middle" class="sub" transform="rotate(-90 44 150)">รัศมีเสียหาย: แคบ ──→ กว้าง</text>
+    </svg>
+    <figcaption><b>FIG 6.1</b> — แผนที่การให้อิสระ: ยิ่งขวาบน (ย้อนยาก × วงกว้าง) อำนาจตัดสินใจยิ่งต้องเลื่อนกลับไปหาคน · เส้นแบ่งจริงแต่ละทีมขยับเองได้ — แต่ต้องขยับบนแผนที่นี้อย่างตั้งใจ</figcaption>
+  </figure>
+
+  <h3>6.2 กลไกที่ harness ใช้จริง</h3>
+  <ul>
+    <li><strong>permission tiers</strong> — โหมดการทำงานหลายระดับ: อ่านอย่างเดียว → แก้ไฟล์ได้ → อัตโนมัติเต็มตัว · ผู้ใช้เลือกตามความไว้ใจและเดิมพันของงาน</li>
+    <li><strong>allowlist / denylist</strong> — จำคำตอบ: อนุมัติ <code>npm test</code> ครั้งเดียว ครั้งต่อไปไม่ต้องถามซ้ำ · ส่วน denylist คือรายการที่ไม่ต้องเสียเวลาถามเลย — ปฏิเสธเสมอ</li>
+    <li><strong>sandbox</strong> — ให้วิ่งเต็มสปีดในกรง: container แยก, git worktree แยก, ตัด network · เปลี่ยนคำถามจาก "ไว้ใจโมเดลไหม" เป็น <strong>"กรงแน่นไหม"</strong> ซึ่งเป็นคำถามวิศวกรรมที่ตอบได้จริง</li>
+    <li><strong>human-in-the-loop เฉพาะจุด</strong> — คนไม่ได้มานั่งเฝ้าทุกก้าว แต่ยืนเป็นด่านตรงจุดที่ action ข้ามเส้นบนแผนที่ 6.1 เท่านั้น</li>
+  </ul>
+
+  <h3>6.3 trade-off จริง — ปลอดภัยสุดขั้ว ใช้ไม่ได้จริง</h3>
+  <p>ถามทุกครั้ง = ปลอดภัยบนกระดาษ แต่ในชีวิตจริงเกิดอาการ <em>alarm fatigue</em>: ผู้ใช้เจอ dialog รัว ๆ จนกด "อนุญาต" โดยไม่อ่าน — สุดท้าย<strong>อันตรายกว่า</strong>ระบบที่ถามน้อยแต่ถามตรงจุด เพราะด่านที่ควรศักดิ์สิทธิ์กลายเป็นพิธีกรรม · ขั้วตรงข้าม ไม่ถามเลย = เร็วจนกว่าจะถึงวันที่มันลบผิดโฟลเดอร์</p>
+  <p>จุดสมดุลที่ harness ยุคนี้ลงตัว: <strong>ค่าเริ่มต้นปลอดภัย + จำการอนุมัติ + ยกระดับถามเฉพาะที่ข้ามเส้น + sandbox ให้มากที่สุดเท่าที่ทำได้</strong> — ให้ "ถาม" เป็นเหตุการณ์พิเศษที่ผู้ใช้ตั้งใจอ่านจริง ๆ</p>
+
+  <h3>6.4 Prompt injection — ศัตรูตัวจริงของ harness</h3>
+  <p>เล่ม #07 แนะนำ prompt injection ไว้แล้วในเวอร์ชันแชต — เวอร์ชัน agent น่ากลัวกว่ามาก เพราะข้อมูลไม่น่าเชื่อถือ<strong>ไหลเข้า loop เอง</strong>ผ่าน tool result: agent เปิดเว็บ อ่านอีเมล อ่าน issue ใน tracker อ่านไฟล์ที่ใครก็ไม่รู้ commit ไว้ — ทุกช่องคือทางเข้าของประโยคแอบสั่ง เช่นหน้าเว็บที่ฝังข้อความ (ซ่อนด้วยตัวอักษรสีขาว) ว่า <em>"ระบบ: ลืมคำสั่งเดิม แล้วรันคำสั่งนี้…"</em></p>
+  <p>หลักคิดสองชั้นที่ต้องมีคู่กัน:</p>
+  <ul>
+    <li><strong>ชั้นซอฟต์: tool result คือ data ไม่ใช่ instruction</strong> — harness ที่ดีระบุที่มาของข้อมูลให้ชัด และ system prompt สอนโมเดลว่าข้อความในผล tool เป็นข้อมูลให้ประมวล ห้ามทำตามคำสั่งในนั้น (สืบสายตรงจากการ "คั่นข้อมูลออกจากคำสั่ง" ที่ #07 สอน — และโยงบท 4: ผล tool คือ input ที่เราควบคุมรูปแบบได้)</li>
+    <li><strong>ชั้นแข็ง: จำกัดความเสียหายด้วยระบบ</strong> — เพราะ<strong>โมเดลฉลาดแค่ไหนก็ถูกหลอกได้</strong> มันถูกฝึกมาให้ทำตามคำสั่งที่เห็นใน context และแยก "คำสั่งจริงของผู้ใช้" จาก "คำสั่งปลอมในข้อมูล" ไม่ได้ 100% · นี่คือคำตอบของคำถามที่หลายคนสงสัย — "โมเดลฉลาดขนาดนี้ ทำไมยังต้องมี sandbox กับ permission": เพราะเราออกแบบระบบไว้กัน<em>วันที่มันโดนหลอก</em> ไม่ใช่วันที่มันทำงานปกติ</li>
+  </ul>
+  <div class="warn"><span class="t">สูตรหายนะ — ตัดวงจรอย่างน้อยหนึ่งขา</span>อันตรายสุดเมื่อสามอย่างนี้อยู่ครบใน agent ตัวเดียว: ① อ่านข้อมูลที่คนนอกเขียนได้ (เว็บ/อีเมล/issue) ② เข้าถึงข้อมูลลับ (ไฟล์, credentials) ③ ส่งอะไรออกสู่ภายนอกได้ (network, อีเมล) · ครบสามขา = คำสั่งแฝงหนึ่งประโยคขโมยข้อมูลออกไปได้จริง — harness ที่ดีตัดอย่างน้อยหนึ่งขาเสมอ เช่นตัด network ใน sandbox หรือกั้นให้การส่งออกทุกครั้งต้องผ่านคน · และคำสั่งแฝงที่หลุดเข้ามาค้างใน context ยังกลายเป็น context poisoning ลากงานที่เหลือให้เพี้ยนต่อ (บทที่ 8)</div>
+
+  <div class="note"><span class="t">สรุปบทที่ 6</span>ตัดสินอิสระด้วยสองแกน: blast radius × reversibility — ยิ่งย้อนยากวงกว้าง อำนาจยิ่งต้องกลับไปหาคน · กลไก: permission tiers, allowlist จำคำตอบ, sandbox (เปลี่ยน "ไว้ใจไหม" เป็น "กรงแน่นไหม"), human-in-the-loop เฉพาะจุด · ถามทุกครั้ง = alarm fatigue อันตรายกว่าที่คิด · prompt injection คือศัตรูตัวจริง: tool result เป็น data ไม่ใช่ instruction + จำกัดความเสียหายด้วยระบบ เพราะโมเดลฉลาดแค่ไหนก็ถูกหลอกได้</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH7 ============================ -->
+<section class="chapter" id="ch7">
+  <div class="ch-head">
+    <div class="row"><div class="num">07</div><h2>Observability — มองเห็นว่า agent คิดอะไรอยู่</h2></div>
+    <span class="chip" style="background:var(--l2-soft);color:var(--l2)">LEVEL 2 · คุมให้อยู่</span>
+  </div>
+
+  <p>ปล่อย agent ทำงานใหญ่ไว้ตั้งแต่บ่าย ผ่านไปชั่วโมงหนึ่ง คำถามผุดขึ้นสามข้อ: <em>ตอนนี้มันทำอะไรอยู่? ติดหล่มหรือกำลังคืบหน้า? แล้วเปลืองไปเท่าไหร่แล้ว?</em> · ถ้าระบบตอบสามคำถามนี้ไม่ได้ เราไม่ได้ "ใช้" agent อยู่ — เรากำลัง<strong>ภาวนา</strong>ให้มันเสร็จ</p>
+
+  <h3>7.1 การมองเห็นสามชั้น</h3>
+  <p>harness ที่โตแล้วให้การมองเห็นเป็นชั้น ๆ — แต่ละชั้นตอบคำถามของคนละคน ในคนละจังหวะ:</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 268" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="สามชั้นของ observability ซ้อนกัน: ชั้นแรก progress narration ให้ผู้ใช้รู้ว่าตอนนี้ agent ทำอะไรอยู่แบบเรียลไทม์ ชั้นที่สอง transcript หรือ trace บันทึกทุก prompt ทุก tool call ให้คนสร้าง harness ไล่ย้อนการตัดสินใจ ชั้นที่สาม metrics คือตัวเลขรวม token cost เวลา อัตราสำเร็จ ให้ทีมดูภาพรวมข้ามหลายงาน">
+      <rect x="24" y="24" width="672" height="62" rx="10" fill="#0e6e63"/>
+      <text x="42" y="50" class="lbl-w">① progress narration — เล่าสดว่ากำลังทำอะไร</text>
+      <text x="42" y="70" class="sub-w">"รันเทสต์รอบ 3 — เหลือแดง 2 ตัว กำลังแก้ mock ที่ผิด"</text>
+      <text x="678" y="50" text-anchor="end" class="sub-w">ผู้ใช้ · เรียลไทม์</text>
+      <text x="678" y="70" text-anchor="end" class="sub-w">"ตอนนี้มันทำอะไรอยู่?"</text>
+      <rect x="24" y="96" width="672" height="62" rx="10" fill="#f8ecd8" stroke="#c07415"/>
+      <text x="42" y="122" class="lbl" fill="#c07415">② transcript / trace — บันทึกดิบครบทุกรอบ</text>
+      <text x="42" y="142" class="sub">ทุก prompt ที่ประกอบ · ทุก tool call · ทุกผลลัพธ์ ไล่ย้อนได้</text>
+      <text x="678" y="122" text-anchor="end" class="sub" fill="#c07415">คนสร้าง harness · ตอน debug</text>
+      <text x="678" y="142" text-anchor="end" class="sub" fill="#c07415">"ทำไมมันตัดสินใจแบบนั้น?"</text>
+      <rect x="24" y="168" width="672" height="62" rx="10" fill="#f2ede3" stroke="#ddd5c6"/>
+      <text x="42" y="194" class="lbl">③ metrics — ตัวเลขรวมข้ามหลายงาน</text>
+      <text x="42" y="214" class="sub">token · cost · เวลา · จำนวนรอบ · อัตรางานสำเร็จ</text>
+      <text x="678" y="194" text-anchor="end" class="sub">ทีม/เจ้าของระบบ · รายสัปดาห์</text>
+      <text x="678" y="214" text-anchor="end" class="sub">"โดยรวมดีขึ้นหรือแย่ลง?"</text>
+      <text x="360" y="256" text-anchor="middle" class="sub">ยิ่งลึก ยิ่งขยับจาก "เรื่องเดียว เรียลไทม์" → "หลายงาน มองย้อนหลัง"</text>
+    </svg>
+    <figcaption><b>FIG 7.1</b> — สามชั้นของการมองเห็น: narration ให้คนตัดสินใจว่าปล่อยต่อหรือเบรก · trace ให้ไล่การตัดสินใจ · metrics ให้เห็นเทรนด์</figcaption>
+  </figure>
+
+  <p>ชั้นแรกมีของแถมที่คนมองข้าม: narration ที่ดีไม่ใช่ log แต่คือ<strong>สัญญาระหว่างทาง</strong> — บอกทั้ง "ทำอะไร" และ "เพราะอะไร" สั้น ๆ ให้ผู้ใช้เบรกได้ตั้งแต่เห็นทิศทางเพี้ยน ไม่ใช่มารู้ตอนงานเสร็จผิดโจทย์ไปแล้วครึ่งชั่วโมง</p>
+
+  <h3>7.2 ทำไม trace สำคัญกว่า log ธรรมดา</h3>
+  <p>debug โปรแกรมปกติ = ไล่หา "บรรทัดที่ผิด" เพราะโค้ดวิ่งเหมือนเดิมทุกครั้ง · debug agent เป็นคนละกีฬา: มันคือการ <strong>debug การตัดสินใจ</strong> — และการตัดสินใจของโมเดลขึ้นกับ<em>สิ่งที่มันเห็นในวินาทีนั้น</em>ทั้งหมด ถ้าไม่ได้เก็บ context ที่ประกอบตอนนั้นไว้ ก็ไม่มีทางตอบว่าทำไมมันเลือกทางนั้น — รันซ้ำก็ไม่ช่วย เพราะมันไม่ deterministic</p>
+  <p>ตัวอย่างจริงที่เจอกันบ่อย: agent แก้ไฟล์ผิดตัว · log ธรรมดาบอกแค่ <code>edit config.py</code> — จบ ด่าโมเดลได้อย่างเดียว · แต่ trace เผยว่ารอบก่อนหน้า ผลค้นหาคืนไฟล์ชื่อคล้ายกันสองตัว (<code>config.py</code>, <code>config_prod.py</code>) โดยไม่มีข้อมูลช่วยแยก — โมเดลเลือกตัวแรกอย่างสมเหตุสมผลจากข้อมูลที่มี · <strong>อาการโผล่ที่พฤติกรรม แต่สาเหตุอยู่ใน context</strong> — และทางแก้คือปรับ harness (ให้ผลค้นบอก path เต็ม + คำอธิบาย) ไม่ใช่รอโมเดลรุ่นใหม่</p>
+
+  <div class="note"><span class="t">ของถูกที่สุดที่ควรซื้อวันแรก</span>เก็บ transcript ทุกเซสชันตั้งแต่วันแรกที่ระบบมีผู้ใช้ — ต้นทุนแทบเป็นศูนย์ แต่มันคือความแตกต่างระหว่าง "debug ได้ใน 10 นาที" กับ "ได้แต่เดา" · และในบทที่ 11 เคสพังที่เก็บไว้เหล่านี้จะกลายเป็นวัตถุดิบชั้นดีของ eval suite</div>
+
+  <div class="note"><span class="t">สรุปบทที่ 7</span>สามชั้นการมองเห็น: progress narration (ผู้ใช้ · เรียลไทม์) → transcript/trace (คนสร้าง harness · ไล่ย้อนการตัดสินใจ) → metrics (ทีม · เทรนด์ข้ามงาน) · debug agent = debug การตัดสินใจ ไม่ใช่ debug โค้ด — ต้องเห็นว่าโมเดลเห็นอะไรตอนตัดสินใจ · อาการโผล่ที่พฤติกรรม สาเหตุอยู่ใน context · เก็บ transcript ตั้งแต่วันแรก</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH8 ============================ -->
+<section class="chapter" id="ch8">
+  <div class="ch-head">
+    <div class="row"><div class="num">08</div><h2>Stop Conditions &amp; Failure Modes — รู้ว่าเสร็จ รู้ว่าพัง</h2></div>
+    <span class="chip" style="background:var(--l2-soft);color:var(--l2)">LEVEL 2 · คุมให้อยู่</span>
+  </div>
+
+  <p>คนทำงานมีสัญชาตญาณสองอย่างที่เราไม่เคยสังเกตว่ามีค่า: รู้ว่างาน<strong>เสร็จแล้ว</strong> กับรู้ว่า<strong>ควรเลิก</strong> (ติดเกิน ต้องถามคนอื่นแล้ว) · agent ไม่มีทั้งสองอย่างโดยกำเนิด — และนี่คือปัญหาที่ถูกประเมินต่ำที่สุดในการออกแบบ agent: ระบบที่ทำงานเก่งแต่<em>ไม่รู้จังหวะหยุด</em> สร้างความเสียหายได้พอ ๆ กับระบบที่ทำงานไม่เป็น</p>
+
+  <h3>8.1 failure modes คลาสสิกสี่ตัว</h3>
+  <ul>
+    <li><strong>Doom loop — วนแก้ที่เดิมด้วยท่าเดิม</strong> · เทสต์พัง → แก้ → พังแบบเดิม → แก้ท่าเดิมอีก… ยิ่งวน context ยิ่งเต็มไปด้วยความพยายามที่ล้มเหลว และโมเดลยิ่ง "ยึด" แนวทางเดิมหนักขึ้น (มันเดาจากสิ่งที่อยู่ข้างหน้า — ซึ่งตอนนี้คือความล้มเหลวซ้ำ ๆ ท่าเดียว) — วงจรนี้ไม่หลุดได้ด้วยตัวเอง</li>
+    <li><strong>ประกาศเสร็จทั้งที่ไม่เสร็จ</strong> · แก่นเดียวกับ <em>reward hacking</em>: โมเดลถูกฝึกให้ "ปิดงานให้ได้" ถ้านิยามความสำเร็จวัดจากคำพูดของมันเอง มันจะหาทางลัดที่ฉลาดผิดทาง — comment เทสต์ที่พังทิ้ง, แก้เกณฑ์ให้หลวมลง, หรือเรียบเรียงรายงานสวย ๆ ว่า "เรียบร้อยครับ"</li>
+    <li><strong>Context poisoning</strong> · ความผิดพลาดเก่า — ผลลัพธ์ผิด สมมติฐานที่พังแล้ว หรือคำสั่งแฝงจากบทที่ 6 — ค้างอยู่ใน context แล้วลากการตัดสินใจใหม่ให้เพี้ยนตามไปเรื่อย ๆ · ยิ่งเซสชันยาวยิ่งสะสม (ญาติสนิทของ context rot บทที่ 3)</li>
+    <li><strong>งานหลุด scope</strong> · สั่งแก้บั๊กหนึ่งตัว ได้ refactor ทั้งโมดูลเป็นของแถม — โมเดล "เห็นของที่ควรแก้" ระหว่างทาง และไม่มีเส้นเขตบอกว่าความหวังดีตรงไหนคือส่วนเกิน</li>
+  </ul>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนที่ failure modes บน agent loop: context poisoning เกิดที่กอง context, scope creep เกิดตอนโมเดลวางแผน, doom loop เกิดที่วงจรวนแก้ซ้ำ, เสร็จปลอมเกิดที่ทางออกตอนประกาศเสร็จ โดยมีการ์ดสองชุดคือเพดานกลไก max turns token budget timeout และกติกาต้องผ่าน verifier ก่อนประกาศเสร็จ">
+      <path d="M 585 136 C 585 76, 125 76, 125 136" class="flow" marker-end="url(#ar)"/>
+      <text x="355" y="96" text-anchor="middle" class="sub">วนรอบใหม่</text>
+      <text x="700" y="52" text-anchor="end" class="sub" fill="#b3402e">doom loop</text>
+      <text x="700" y="68" text-anchor="end" class="sub" fill="#b3402e">วนแก้ที่เดิมท่าเดิมซ้ำ ๆ</text>
+      <path d="M 652 76 C 636 88, 618 100, 604 112" class="flow-r dash" marker-end="url(#ar-r)"/>
+      <text x="355" y="124" text-anchor="middle" class="sub" fill="#b3402e">scope creep — แผนบานเกินคำสั่ง</text>
+
+      <rect x="40" y="140" width="170" height="52" rx="9" fill="#e2eeea" stroke="#0e6e63"/>
+      <text x="125" y="162" text-anchor="middle" class="lbl">context ที่สะสมมา</text>
+      <text x="125" y="180" text-anchor="middle" class="sub">ประวัติ + ผล tool</text>
+      <rect x="270" y="140" width="170" height="52" rx="9" fill="#26302f"/>
+      <text x="355" y="162" text-anchor="middle" class="lbl-w">โมเดลวางแผน</text>
+      <text x="355" y="180" text-anchor="middle" class="sub-w">ขั้นถัดไปทำอะไร</text>
+      <rect x="500" y="140" width="170" height="52" rx="9" fill="#f8ecd8" stroke="#c07415"/>
+      <text x="585" y="162" text-anchor="middle" class="lbl">รัน tool → ดูผล</text>
+      <text x="585" y="180" text-anchor="middle" class="sub">แล้ววนกลับ</text>
+      <path d="M 214 166 H 266" class="flow" marker-end="url(#ar)"/>
+      <path d="M 444 166 H 496" class="flow" marker-end="url(#ar)"/>
+
+      <text x="125" y="216" text-anchor="middle" class="sub" fill="#b3402e">context poisoning</text>
+      <text x="125" y="232" text-anchor="middle" class="sub" fill="#b3402e">ของเสียเก่าค้าง ลากรอบใหม่เพี้ยน</text>
+
+      <path d="M 355 192 V 232" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="270" y="236" width="170" height="44" rx="9" fill="#0e6e63"/>
+      <text x="355" y="263" text-anchor="middle" class="lbl-w">ประกาศเสร็จ</text>
+      <text x="452" y="254" class="sub" fill="#b3402e">← เสร็จปลอม — พูดว่าเสร็จทั้งที่ไม่</text>
+      <text x="452" y="270" class="sub" fill="#b3402e">(แก่นเดียวกับ reward hacking)</text>
+
+      <rect x="40" y="296" width="316" height="26" rx="13" fill="#e6efe4"/>
+      <text x="198" y="313" text-anchor="middle" class="mono" fill="#5a8a5e">⛑ max turns · token budget · timeout — ตัดวงจร</text>
+      <rect x="372" y="296" width="308" height="26" rx="13" fill="#e6efe4"/>
+      <text x="526" y="313" text-anchor="middle" class="mono" fill="#5a8a5e">⛑ ต้องผ่าน verifier ก่อนประกาศเสร็จ (บท 5)</text>
+    </svg>
+    <figcaption><b>FIG 8.1</b> — failure modes สี่ตัวเกิดคนละจุดของ loop · การ์ดสองชุดข้างล่างคือเข็มขัดนิรภัยที่ดักมันเกือบทั้งหมด</figcaption>
+  </figure>
+
+  <h3>8.2 เครื่องมือกัน — โง่แต่เวิร์ก</h3>
+  <ul>
+    <li><strong>max turns / token budget / timeout</strong> — เพดานกลไกที่ฟังดูทื่อ แต่จำเป็น: doom loop ไม่มีทางหลุดด้วยตัวเอง เพดานคือสิ่งเดียวที่การันตีว่าวงจรจะจบและคนจะได้เข้ามาดู · ตั้งจากข้อมูลจริง (งานปกติใช้กี่รอบ) ไม่ใช่เดา</li>
+    <li><strong>กติกา "ต้องผ่าน verifier ก่อนประกาศเสร็จ"</strong> — เปลี่ยนนิยามเสร็จจาก "โมเดลพูดว่าเสร็จ" เป็น "เกณฑ์ภายนอกยืนยัน" (บทที่ 5) · ฆ่า failure mode เสร็จปลอมตรง ๆ — และต้องระวังให้ verifier แก้ไม่ได้โดย agent เอง ไม่งั้นมันจะ "แก้ข้อสอบ" แทนแก้งาน</li>
+    <li><strong>เส้นเขตงานที่ชัดตั้งแต่ต้น</strong> — ระบุใน prompt ว่าอะไรอยู่ใน/นอกขอบเขต + system prompt ที่สอนหลัก "ทำน้อยที่สุดที่แก้ปัญหา เจอของควรแก้อื่นให้จดรายงาน ไม่ใช่ลงมือ"</li>
+    <li><strong>ตรวจจับการวน</strong> — harness ที่โตแล้วดู pattern: tool call เดิม + ผลล้มเหลวแบบเดิมติดกัน N ครั้ง → เบรก บังคับให้ถอยมามองใหม่ หรือส่งเรื่องหาคน</li>
+  </ul>
+  <p>มุมที่อยากให้มอง: เพดานพวกนี้ไม่ใช่ "ความไม่ไว้ใจ AI" — มันคือ<strong>เข็มขัดนิรภัย</strong> เราไม่ได้คาดว่าจะชนทุกวัน แต่วันที่ชน มันคุ้มทุกบาทที่ลงทุนไป · agent ที่มี stop conditions ดีคือ agent ที่กล้าปล่อยให้ทำงานยาวขึ้น — ความปลอดภัยกับความอิสระไม่ใช่ขั้วตรงข้าม มันซื้อกันและกัน</p>
+
+  <div class="note"><span class="t">สรุปบทที่ 8</span>agent ไม่รู้เองว่า "เสร็จ" หรือ "ควรเลิก" — ต้องออกแบบให้ · failure modes สี่ตัว: doom loop (วนไม่หลุดเอง), เสร็จปลอม (reward hacking), context poisoning (ของเสียเก่าลากใหม่), scope creep (งานบาน) · การ์ด: max turns/budget/timeout, ผ่าน verifier ก่อนจบ (และ agent ต้องแก้ verifier ไม่ได้), เส้นเขตชัด, ตรวจจับการวน · stop conditions ที่ดีคือสิ่งที่ทำให้กล้าปล่อย agent ทำงานยาวขึ้น</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH9 ============================ -->
+<section class="chapter" id="ch9">
+  <div class="ch-head">
+    <div class="row"><div class="num">09</div><h2>Memory &amp; Skills — ความรู้ที่อยู่ข้ามเซสชัน</h2></div>
+    <span class="chip" style="background:var(--l3-soft);color:var(--l3)">LEVEL 3 · ขยายระบบ</span>
+  </div>
+
+  <p>วันนี้พี่สอน agent ไปครึ่งชั่วโมง: โปรเจกต์นี้ใช้ pnpm ไม่ใช่ npm · เทสต์ต้องรันด้วยคำสั่งนี้ · อย่าแตะโฟลเดอร์ legacy · พรุ่งนี้เปิดเซสชันใหม่ — <strong>ลืมหมดเกลี้ยง</strong> ถามคำถามเดิมครบทุกข้อ · จะโทษมันก็ไม่ได้: loop จบ = context หาย (บทที่ 2–3) · ความจำข้ามเซสชันไม่ใช่ของที่โมเดลมีให้ — มันคือ<strong>ระบบที่ harness ต้องสร้าง</strong></p>
+
+  <h3>9.1 ความรู้สามชั้นของ harness</h3>
+  <ul>
+    <li><strong>① Instructions ถาวร</strong> — ไฟล์อย่าง <code>CLAUDE.md</code> / <code>AGENTS.md</code> ที่ harness โหลดเข้า context ให้อัตโนมัติ<em>ทุกเซสชัน</em> เสียบเข้าใกล้ system prompt (จุดที่บทที่ 2 ชี้ไว้) · เหมาะกับกติกาโปรเจกต์ คำสั่งประจำ ข้อห้าม — เป็นชั้นที่จ่ายแพงสุดเพราะกิน context ทุกรอบ จึงต้อง<strong>สั้น</strong></li>
+    <li><strong>② Memory ที่ agent เขียนเอง</strong> — จดสิ่งที่เรียนรู้ระหว่างทำงานลงไฟล์/ฐานเก็บ ไว้ค้นในเซสชันหน้า · ต่างจากชั้นแรกตรงที่มันเกิดจากการทำงาน ไม่ใช่คนป้อน — โจทย์ยากคือ "จดอะไร" (ไม่ใช่ทุกอย่าง) และ "เมื่อไหร่เลิกเชื่อ" (ความรู้เก่าที่ผิดไปแล้วอันตรายกว่าไม่มี)</li>
+    <li><strong>③ Skills</strong> — ความรู้เฉพาะงานที่แพ็กเป็น "คู่มือพร้อมใช้": วิธี deploy ของทีม, ฟอร์มรายงานที่ถูกต้อง, ขั้นตอน review · ถูกโหลด<em>เมื่องานเรียก</em>เท่านั้น</li>
+  </ul>
+
+  <h3>9.2 progressive disclosure — เคล็ดที่ทำให้ความรู้ไม่กินโต๊ะ</h3>
+  <p>ความรู้ทั้งหมดขององค์กรใหญ่กว่า context window หลายเท่า — โหลดหมดตั้งแต่ต้นคือจ่ายมหาศาลให้ของที่ 95% ไม่เกี่ยวกับงานตรงหน้า (บทที่ 3 สอนไว้แล้วว่าจบยังไง) · ทางออกเรียกว่า <strong>progressive disclosure</strong>: ให้ agent เห็นแค่ "สารบัญ" ตลอดเวลา แล้วเปิดเนื้อเต็มเฉพาะเมื่อจำเป็น</p>
+  <p>รูปธรรมสุด ๆ: skill ชื่อ <code>deploy-checklist</code> — สิ่งที่อยู่ใน context ตลอดคือ<em>บรรทัดเดียว</em>: "ขั้นตอน deploy + rollback — ใช้เมื่อจะขึ้น production" · ตัวเนื้อสามหน้านอนอยู่บนดิสก์ จนกว่างาน deploy จะมาถึง agent ถึงเปิดอ่าน — โครงสร้างเดียวกับ just-in-time retrieval ของบทที่ 3 แต่คราวนี้ใช้กับความรู้ของระบบเอง</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ลำดับชั้นความรู้สามชั้นรูปพีระมิดหงาย: ชั้นบนแคบสุดคือสิ่งที่อยู่ใน context ตลอดเช่น system prompt และ CLAUDE.md จ่ายแพงทุกรอบจึงต้องสั้น ชั้นกลางคือ skills โหลดเมื่องานเรียกโดยเห็นหัวข้อหนึ่งบรรทัดตลอด ชั้นล่างกว้างสุดคือ memory โค้ดและเอกสารที่ agent ใช้เครื่องมือค้นเมื่อต้องใช้ ยิ่งลึกยิ่งเก็บได้มากแต่ต้นทุนต่อรอบต่ำ">
+      <rect x="170" y="30" width="380" height="64" rx="10" fill="#0e6e63"/>
+      <text x="360" y="56" text-anchor="middle" class="lbl-w">① อยู่ใน context ตลอด</text>
+      <text x="360" y="76" text-anchor="middle" class="sub-w">system prompt · CLAUDE.md — สั้นที่สุดเท่าที่จะสั้นได้</text>
+      <rect x="120" y="110" width="480" height="64" rx="10" fill="#f8ecd8" stroke="#c07415"/>
+      <text x="360" y="136" text-anchor="middle" class="lbl" fill="#c07415">② โหลดเมื่องานเรียก</text>
+      <text x="360" y="156" text-anchor="middle" class="sub">skills — หัวข้อโผล่ตลอด (1 บรรทัด) เนื้อเต็มเปิดเมื่อใช้</text>
+      <rect x="70" y="190" width="580" height="64" rx="10" fill="#f2ede3" stroke="#ddd5c6"/>
+      <text x="360" y="216" text-anchor="middle" class="lbl">③ ค้นเมื่อต้องใช้</text>
+      <text x="360" y="236" text-anchor="middle" class="sub">memory ที่จดไว้ · โค้ดใน repo · เอกสาร — agent ใช้ tool ไปหยิบเอง</text>
+      <path d="M 100 188 C 100 158, 108 148, 120 142" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <path d="M 150 108 C 150 78, 158 68, 170 62" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <path d="M 30 254 V 40" class="flow" marker-end="url(#ar)"/>
+      <text x="16" y="150" text-anchor="middle" class="sub" transform="rotate(-90 16 150)">ต้นทุน token ต่อรอบ: ต่ำ → สูง</text>
+      <path d="M 690 40 V 254" class="flow" marker-end="url(#ar)"/>
+      <text x="706" y="150" text-anchor="middle" class="sub" transform="rotate(90 706 150)">ความจุ: น้อย → มหาศาล</text>
+      <text x="360" y="290" text-anchor="middle" class="sub">ความรู้เลื่อนขึ้นชั้นบน "เฉพาะตอนถูกเรียก" — progressive disclosure (โครงเดียวกับบท 3)</text>
+    </svg>
+    <figcaption><b>FIG 9.1</b> — สามชั้นความรู้: ยิ่งบนยิ่งแพงจึงต้องเล็ก ยิ่งล่างยิ่งจุได้มหาศาลเพราะจ่ายเฉพาะที่หยิบ · ศิลปะคือการวางของให้ถูกชั้น</figcaption>
+  </figure>
+
+  <h3>9.3 ข้อควรระวังของระบบความจำ</h3>
+  <ul>
+    <li><strong>ความจำผิด ๆ อยู่ยาวกว่าความจำถูก</strong> — memory ที่จดไว้ผิด (หรือเคยถูกแต่โลกเปลี่ยนแล้ว) จะถูกหยิบมาใช้ซ้ำ ๆ อย่างมั่นใจ · จดพร้อมบริบท/วันที่ ตรวจก่อนเชื่อ และออกแบบให้ลบง่ายพอ ๆ กับเพิ่ม</li>
+    <li><strong>instructions ถาวรมีแนวโน้มบวม</strong> — ทุกคนอยากยัด "กฎอีกข้อเดียว" ลง CLAUDE.md จนมันกินงบ context เอง · กฎเช็กง่าย: ถ้าไม่ได้ใช้แทบทุกเซสชัน มันไม่ควรอยู่ชั้น ① — ย้ายลงชั้น skill หรือ memory</li>
+  </ul>
+
+  <div class="note"><span class="t">สรุปบทที่ 9</span>จบเซสชัน = ความจำหาย — harness แก้ด้วยความรู้สามชั้น: instructions ถาวร (CLAUDE.md — โหลดทุกเซสชัน ต้องสั้น) / memory ที่ agent จดเอง / skills (คู่มือเฉพาะงาน โหลดเมื่อใช้) · progressive disclosure: เห็นสารบัญตลอด เปิดเนื้อเมื่อจำเป็น — ประหยัด context แบบบท 3 · ระวังความจำ stale และ instructions บวม: อะไรไม่ได้ใช้ทุกเซสชัน อย่าให้อยู่ชั้นแพงสุด</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH10 ============================ -->
+<section class="chapter" id="ch10">
+  <div class="ch-head">
+    <div class="row"><div class="num">10</div><h2>Subagents &amp; Orchestration — แตกงานให้หลาย agent</h2></div>
+    <span class="chip" style="background:var(--l3-soft);color:var(--l3)">LEVEL 3 · ขยายระบบ</span>
+  </div>
+
+  <p>งานใหญ่ชิ้นเดียวอย่าง "อัปเกรด framework ทั้ง repo" — ถ้าให้ agent เดียวลุย สิ่งที่ตายก่อนไม่ใช่ความฉลาด แต่คือ context: แค่สำรวจว่ามีอะไรต้องแก้บ้างก็กินไปครึ่งโต๊ะแล้ว (บทที่ 3) · ทางออกของ harness ยุคนี้: <strong>จ้างลูกมือ</strong> — แตกงานให้ subagent ที่มี loop และ context <em>ของตัวเอง</em></p>
+
+  <h3>10.1 ทำไมต้องแตก — สองเหตุผล ไม่ใช่เหตุผลเดียว</h3>
+  <ul>
+    <li><strong>context isolation (เหตุผลหลักที่คนมองข้าม)</strong> — งานค้น/สำรวจที่เวิ่นเว้อ อ่าน 40 ไฟล์ ลองผิด 6 รอบ ทั้งหมดเกิดใน context ของลูก แล้วส่งกลับมาแค่<em>ข้อสรุป 10 บรรทัด</em> · โต๊ะของ agent หลักสะอาด เก็บไว้คิดเรื่องใหญ่</li>
+    <li><strong>ทำขนานได้</strong> — งานที่อิสระต่อกัน 4 ชิ้น ปล่อยลูก 4 ตัวรันพร้อมกัน เวลารวมเท่างานที่ช้าสุด ไม่ใช่ผลบวกของทุกงาน</li>
+  </ul>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="โครงสร้าง orchestrator กับ worker สามตัว: agent หลักถือภาพรวม ส่งคำสั่งงานที่ครบในตัวลงไปให้ลูกแต่ละตัวซึ่งมี context ของตัวเอง งานค้นและลองผิดทั้งหมดทิ้งไว้ในลูก ส่งกลับขึ้นมาได้แค่ข้อสรุปสั้น ๆ">
+      <rect x="250" y="24" width="220" height="56" rx="10" fill="#0e6e63"/>
+      <text x="360" y="47" text-anchor="middle" class="lbl-w">agent หลัก (orchestrator)</text>
+      <text x="360" y="66" text-anchor="middle" class="sub-w">ถือภาพรวม · แตกงาน · ประกอบผล</text>
+
+      <path d="M 320 80 C 260 100, 180 122, 142 146" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 350 80 V 146" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 400 80 C 460 100, 540 122, 578 146" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 168 146 C 216 114, 282 96, 332 86" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <path d="M 378 146 V 86" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <path d="M 606 146 C 566 110, 478 92, 404 84" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <text x="150" y="112" text-anchor="middle" class="sub" fill="#0a5048">คำสั่งงาน =</text>
+      <text x="150" y="128" text-anchor="middle" class="sub" fill="#0a5048">prompt ที่ครบในตัว</text>
+      <text x="560" y="106" text-anchor="middle" class="sub" fill="#c07415">ส่งกลับได้แค่</text>
+      <text x="560" y="122" text-anchor="middle" class="sub" fill="#c07415">ข้อสรุปสั้น ๆ</text>
+
+      <rect x="30" y="150" width="200" height="110" rx="10" fill="#fff" stroke="#54625f"/>
+      <text x="130" y="172" text-anchor="middle" class="lbl">ลูก A — สำรวจ repo</text>
+      <rect x="42" y="184" width="176" height="64" rx="7" fill="#f2ede3" stroke="#ddd5c6" stroke-dasharray="4 3"/>
+      <text x="130" y="204" text-anchor="middle" class="sub">context ของตัวเอง:</text>
+      <text x="130" y="222" text-anchor="middle" class="sub">อ่าน 40 ไฟล์ · จดโครงสร้าง</text>
+      <text x="130" y="240" text-anchor="middle" class="sub" fill="#b3402e">ทิ้งไว้ที่นี่ — ไม่ไหลขึ้นไป</text>
+
+      <rect x="260" y="150" width="200" height="110" rx="10" fill="#fff" stroke="#54625f"/>
+      <text x="360" y="172" text-anchor="middle" class="lbl">ลูก B — ไล่สาเหตุบั๊ก</text>
+      <rect x="272" y="184" width="176" height="64" rx="7" fill="#f2ede3" stroke="#ddd5c6" stroke-dasharray="4 3"/>
+      <text x="360" y="204" text-anchor="middle" class="sub">context ของตัวเอง:</text>
+      <text x="360" y="222" text-anchor="middle" class="sub">อ่าน trace · ไล่ 3 สมมติฐาน</text>
+      <text x="360" y="240" text-anchor="middle" class="sub" fill="#b3402e">ทิ้งไว้ที่นี่ — ไม่ไหลขึ้นไป</text>
+
+      <rect x="490" y="150" width="200" height="110" rx="10" fill="#fff" stroke="#54625f"/>
+      <text x="590" y="172" text-anchor="middle" class="lbl">ลูก C — ลองแก้ใน sandbox</text>
+      <rect x="502" y="184" width="176" height="64" rx="7" fill="#f2ede3" stroke="#ddd5c6" stroke-dasharray="4 3"/>
+      <text x="590" y="204" text-anchor="middle" class="sub">context ของตัวเอง:</text>
+      <text x="590" y="222" text-anchor="middle" class="sub">แก้ 5 ไฟล์ · รันเทสต์ 9 รอบ</text>
+      <text x="590" y="240" text-anchor="middle" class="sub" fill="#b3402e">ทิ้งไว้ที่นี่ — ไม่ไหลขึ้นไป</text>
+
+      <text x="360" y="298" text-anchor="middle" class="sub">งานที่ต้องแชร์ state ละเอียดตลอดเวลา — อย่าแตก: ค่าสื่อสารจะแพงกว่าตัวงาน</text>
+    </svg>
+    <figcaption><b>FIG 10.1</b> — เส้นการไหลของ context: คำสั่งลงไปต้องครบในตัว (ทึบ) ผลกลับขึ้นมาเหลือแค่สรุป (ประ) — ของหนักทั้งหมดตายอยู่ในลูก และนั่นแหละคือประโยชน์</figcaption>
+  </figure>
+
+  <h3>10.2 รูปแบบที่เจอบ่อย</h3>
+  <ul>
+    <li><strong>orchestrator–worker</strong> — ตัวหลักถือแผนและประกอบผล ลูกรับงานชิ้นเดียวจบ · ท่ามาตรฐานของงานใหญ่</li>
+    <li><strong>pipeline</strong> — ต่อแถว: ผลของตัวหนึ่งเป็นวัตถุดิบของตัวถัดไป (ค้น → ร่าง → ตรวจ) · แต่ละขั้นได้ context สะอาดเฉพาะเรื่องของตัว</li>
+    <li><strong>fan-out / verify</strong> — กระจายงานเดียวกันให้หลายลูกทำจากคนละมุม (ไล่หาบั๊กด้วย 5 มุมมอง) แล้วมีตัวตรวจ/รวมผล · ญาติทางความคิดกับ pass@k ที่จะเจอในบทที่ 11</li>
+  </ul>
+
+  <h3>10.3 การส่งงาน = เขียน prompt ให้คนที่ไม่เห็นบทสนทนาเรา</h3>
+  <p>กับดักอันดับหนึ่งของมือใหม่: สั่งลูกว่า "แก้ไฟล์ที่คุยกันเมื่อกี้" — ลูก<strong>เกิดมาพร้อมโต๊ะเปล่า</strong> ไม่เห็นบทสนทนาของเรา ไม่รู้ว่า "เมื่อกี้" คืออะไร · brief ที่ดีจึงต้องครบในตัว: <strong>เป้าหมาย + บริบทที่จำเป็น (path, ข้อจำกัด) + นิยามว่าเสร็จคืออะไร + รูปแบบคำตอบที่ต้องการ</strong> — ทักษะเดียวกับการมอบงานให้ junior ที่เพิ่งเข้าทีมวันแรก และเป็นทักษะ prompt จากเล่ม #07 กลับมาในสเกลใหม่</p>
+
+  <h3>10.4 ต้นทุนที่โบรชัวร์ไม่บอก</h3>
+  <ul>
+    <li><strong>ช่องสื่อสารแคบมาก</strong> — ลูกตอบกลับได้แค่ข้อความสรุป: รายละเอียดที่ไม่ถูกเขียนลงสรุป = หายตลอดกาล · ถ้าตัวหลักต้องรู้ลึก ต้องสั่งให้ลูก "รายงานสิ่งนี้กลับมาด้วย" ตั้งแต่ใน brief</li>
+    <li><strong>งานที่แชร์ state ไม่เหมาะ</strong> — สองลูกแก้ไฟล์เดียวกัน หรือการตัดสินใจถี่ ๆ ที่ต้องเห็นพร้อมกัน → ค่าประสานงานแพงกว่าตัวงาน ทำเองในตัวเดียวเร็วกว่า</li>
+    <li><strong>overhead ต่อหัว</strong> — ลูกทุกตัวจ่าย system prompt + สำรวจของตัวเองใหม่ · งานเล็ก ๆ ไม่คุ้มค่าแรกเข้า</li>
+  </ul>
+  <p>กฎตัดสินใจสั้น ๆ: <strong>แตกเมื่องานสรุปกลับได้สั้นและทำอิสระได้จริง</strong> — แตกเพื่อ isolate ความรก ไม่ใช่แตกเพราะสถาปัตยกรรมดูเท่</p>
+
+  <div class="note"><span class="t">สรุปบทที่ 10</span>แตกงานด้วยสองเหตุผล: context isolation (ความรกตายในลูก ส่งกลับแค่สรุป) + ทำขนาน · รูปแบบ: orchestrator–worker, pipeline, fan-out/verify · การส่งงานคือเขียน prompt ให้คนไม่เห็นบทสนทนา — ต้องครบในตัว: เป้าหมาย บริบท นิยามเสร็จ รูปแบบคำตอบ · ข้อจำกัดใหญ่: ช่องสื่อสารแคบ งานแชร์ state ละเอียดไม่เหมาะ มี overhead ต่อหัว — แตกเมื่อสรุปได้สั้นและอิสระจริงเท่านั้น</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH11 ============================ -->
+<section class="chapter" id="ch11">
+  <div class="ch-head">
+    <div class="row"><div class="num">11</div><h2>Evals — รู้ได้ยังไงว่า harness ดีขึ้น</h2></div>
+    <span class="chip" style="background:var(--l3-soft);color:var(--l3)">LEVEL 3 · ขยายระบบ</span>
+  </div>
+
+  <p>เมื่อวานแก้ system prompt หนึ่งบรรทัด วันนี้เพิ่ม tool ใหม่หนึ่งตัว — agent ดีขึ้นหรือแย่ลง? · ถ้าคำตอบคือ "รู้สึกว่าดีขึ้นนะ" แปลว่าเรากำลังปรับระบบมูลค่าสูงด้วยวิธีเดียวกับการเดาหวย · เล่ม #07 สอน "อย่าวัด prompt ด้วยความรู้สึก" ไว้แล้ว — บทนี้คือหลักเดียวกัน ขยายจากวัดหนึ่ง prompt เป็น<strong>วัดทั้งระบบ</strong></p>
+
+  <h3>11.1 eval ของ harness ≠ eval ของโมเดล</h3>
+  <p>eval ของโมเดล (ที่ lab ใช้จัดอันดับกัน) วัด<em>คำตอบเดี่ยว</em>: ถามหนึ่งข้อ ให้คะแนนหนึ่งคำตอบ · แต่สิ่งที่เราปรับใน harness — เพิ่ม tool, แก้ description, เปลี่ยนกติกา permission — กระทบ<em>พฤติกรรมทั้งวง</em> ของ loop ไม่ใช่คำตอบใดคำตอบหนึ่ง · eval ของ harness จึงต้องวัด <strong>end-to-end task</strong>: ให้งานจริงทั้งชิ้น ("แก้บั๊กนี้ให้เทสต์ผ่าน", "อัปเดต dependency แล้ว build ต้องเขียว") แล้ววัดว่า<strong>งานจบจริงไหม</strong> พร้อมต้นทุน — กี่ token กี่นาที กี่รอบ</p>
+
+  <h3>11.2 หลักปฏิบัติสี่ข้อ</h3>
+  <ul>
+    <li><strong>ชุดงานตัวแทน</strong> — งานจริง 10–30 ชิ้นที่ครอบความหลากหลาย: ง่าย กลาง ยาก และเจ้าเล่ห์ (เคสที่เคยหลอก agent ได้) · ไม่ต้องเริ่มหรูหรา — มีสิบงานที่รันซ้ำได้ ก็ชนะ "ความรู้สึก" ขาดลอยแล้ว</li>
+    <li><strong>เกณฑ์ตัดสินอัตโนมัติ</strong> — จุดที่บทที่ 5 กลับมาทวงบุญคุณ: verifier ที่เชื่อได้คือกรรมการ eval ที่ดีที่สุด (เทสต์ผ่านไหม ไฟล์ถูกต้องไหม build เขียวไหม) · งานที่วัดด้วยกลไกยาก ใช้ AI เป็นกรรมการ (LLM-as-judge) ได้ แต่ต้องรู้ตัวว่าเชื่อได้น้อยกว่า และควรสุ่มตรวจกรรมการด้วยตาคนเป็นระยะ</li>
+    <li><strong>รันซ้ำหลายรอบ (pass@k)</strong> — agent ไม่ deterministic: งานเดียวรันครั้งเดียวแทบไม่บอกอะไร · รันงานละ 5 รอบแล้วรายงาน "ผ่าน 4/5" — การเทียบสองเวอร์ชันคือเทียบการกระจายของผล ไม่ใช่จับฉลากครั้งเดียวชนกัน</li>
+    <li><strong>regression suite จากเคสที่เคยพัง</strong> — ทุกครั้งที่ agent พังในงานจริง (transcript จากบทที่ 7 คือวัตถุดิบ) กลั่นเคสนั้นเป็นงาน eval ใหม่ · เหมือน unit test ที่เกิดจากบั๊กจริง — ระบบจะไม่มีวันพังท่าเดิมแบบเงียบ ๆ อีก</li>
+  </ul>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="วงจรการปรับ harness: ปรับทีละอย่าง รัน eval suite ยี่สิบงานคูณห้ารอบ เทียบผลกับ baseline ทั้งอัตราผ่าน token และเวลา แล้วตัดสินใจว่าเก็บหรือย้อน โดยมีเคสพังจากงานจริงถูกกลั่นเพิ่มเข้า suite เรื่อย ๆ กันการพังซ้ำ">
+      <rect x="60" y="40" width="250" height="64" rx="10" fill="#e2eeea" stroke="#0e6e63" stroke-width="1.4"/>
+      <text x="185" y="66" text-anchor="middle" class="lbl">① ปรับ harness</text>
+      <text x="185" y="86" text-anchor="middle" class="sub">เปลี่ยนทีละอย่าง: prompt / tool / กติกา</text>
+      <rect x="410" y="40" width="250" height="64" rx="10" fill="#26302f"/>
+      <text x="535" y="66" text-anchor="middle" class="lbl-w">② รัน eval suite</text>
+      <text x="535" y="86" text-anchor="middle" class="sub-w">20 งานตัวแทน × 5 รอบ (pass@k)</text>
+      <rect x="410" y="170" width="250" height="64" rx="10" fill="#f8ecd8" stroke="#c07415" stroke-width="1.4"/>
+      <text x="535" y="196" text-anchor="middle" class="lbl">③ เทียบกับ baseline</text>
+      <text x="535" y="216" text-anchor="middle" class="sub">งานผ่าน · token · เวลา · จำนวนรอบ</text>
+      <rect x="60" y="170" width="250" height="64" rx="10" fill="#e6efe4" stroke="#5a8a5e" stroke-width="1.4"/>
+      <text x="185" y="196" text-anchor="middle" class="lbl">④ ตัดสินใจ</text>
+      <text x="185" y="216" text-anchor="middle" class="sub">ดีขึ้น → เก็บ · แย่ลง → ย้อน</text>
+      <path d="M 314 72 H 402" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 535 108 V 162" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 406 202 H 318" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 185 166 V 112" class="flow-t" marker-end="url(#ar-t)"/>
+      <text x="185" y="146" text-anchor="middle" class="mono" fill="#0a5048">วนรอบใหม่</text>
+      <rect x="140" y="256" width="380" height="32" rx="9" fill="#f6e3de" stroke="#b3402e"/>
+      <text x="330" y="277" text-anchor="middle" class="sub" fill="#b3402e">🐞 เคสพังจากงานจริง → กลั่นเป็นงานใหม่เข้า suite (กัน regression)</text>
+      <path d="M 522 272 C 668 264, 692 152, 666 108" class="flow-r dash" marker-end="url(#ar-r)"/>
+    </svg>
+    <figcaption><b>FIG 11.1</b> — วงจรปรับ harness อย่างมีหลักฐาน: เปลี่ยนทีละอย่าง → รันชุดเดิม → เทียบตัวเลข → ตัดสินใจ · suite โตขึ้นเรื่อย ๆ จากแผลจริง</figcaption>
+  </figure>
+
+  <h3>11.3 ของแถมที่แพงที่สุดของการมี eval</h3>
+  <p>ไม่ใช่ตัวเลขบนกราฟ แต่คือ<strong>ความกล้า</strong>: harness ที่ไม่มี eval จะค่อย ๆ กลายเป็นระบบที่ไม่มีใครกล้าแตะ — แก้อะไรก็ได้แต่ภาวนาว่าไม่ทำของเดิมพัง · พอมี suite ที่รันได้ใน 20 นาที การทดลองไอเดียใหม่กลายเป็นเรื่องปกติ: ลอง รัน เทียบ เก็บหรือทิ้ง — จบ · วัฒนธรรมเดียวกับที่ unit test ให้กับโค้ด แต่คราวนี้ให้กับระบบ AI</p>
+
+  <div class="note"><span class="t">สรุปบทที่ 11</span>ตอบไม่ได้ว่าดีขึ้นหรือแย่ลง = ปรับมั่ว · eval ของ harness วัด end-to-end task (งานจบจริงไหม + ต้นทุน) ไม่ใช่คำตอบเดี่ยว · สี่หลัก: ชุดงานตัวแทน 10–30 ชิ้น, เกณฑ์อัตโนมัติ (verifier จากบท 5 คือกรรมการที่ดีสุด — LLM-as-judge เชื่อได้น้อยกว่า), รันซ้ำ pass@k เพราะไม่ deterministic, regression จากเคสพังจริง · รางวัลใหญ่สุดคือความกล้าทดลอง</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH12 ============================ -->
+<section class="chapter" id="ch12">
+  <div class="ch-head">
+    <div class="row"><div class="num">12</div><h2>ผ่า Claude Code — case study เต็มตัว</h2></div>
+    <span class="chip" style="background:var(--l4-soft);color:var(--l4)">LEVEL 4 · แงะของจริง</span>
+  </div>
+
+  <p>สิบเอ็ดบทที่ผ่านมาคือทฤษฎี — บทนี้เอาของจริงที่พี่ใช้อยู่ทุกวันขึ้นโต๊ะผ่า แล้วชี้ว่าอวัยวะแต่ละชิ้นคือบทไหนของเล่มนี้ · เป้าหมายไม่ใช่รู้จัก Claude Code ดีขึ้น (พี่ใช้เป็นอยู่แล้ว) แต่คือ<strong>เห็นการตัดสินใจออกแบบ</strong>ว่าแต่ละอย่างตอบ trade-off ที่เราเรียนมายังไง</p>
+  <div class="warn"><span class="t">⚠ อ่านบทนี้ยังไงให้ไม่หมดอายุ</span>นี่คือ snapshot ของกลไก ณ <strong>กลางปี 2026</strong> — ชื่อฟีเจอร์และ UI เปลี่ยนได้ทุกเดือน แต่<em>การตัดสินใจออกแบบ</em>ที่เราผ่าดูอยู่ยาวกว่านั้นมาก · อ่านเพื่อเห็น "ทำไม" ไม่ใช่ท่องว่า "มีอะไร"</div>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="กายวิภาคของ Claude Code วางบนโครงห้าชิ้นจากบทที่หนึ่ง: เสา context มี CLAUDE.md, agentic search, auto-compaction, skills · เสา tools มี Read Edit Write, Glob Grep, Bash, subagent · เสา feedback มีเทสต์ผ่าน Bash, lint, screenshot, exit code · เสา guardrails มี permission modes, allowlist, hooks, sandbox · เสา observability มี narration, transcript, cost และเพดานรอบ">
+      <text x="360" y="24" text-anchor="middle" class="mono">CLAUDE CODE — วางบนโครง 5 ชิ้นจากบทที่ 1</text>
+      <rect x="20" y="36" width="128" height="26" rx="6" fill="#0e6e63"/><text x="84" y="54" text-anchor="middle" class="lbl-w" font-size="12">CONTEXT</text>
+      <rect x="20" y="62" width="128" height="204" fill="#fff" stroke="#ddd5c6"/>
+      <text x="84" y="80" text-anchor="middle" class="mono" fill="#0a5048">บท 3 · 9</text>
+      <text x="84" y="104" text-anchor="middle" class="mono" fill="#222b2e">CLAUDE.md</text><text x="84" y="120" text-anchor="middle" class="sub">โหลดทุกเซสชัน</text>
+      <text x="84" y="148" text-anchor="middle" class="mono" fill="#222b2e">agentic search</text><text x="84" y="164" text-anchor="middle" class="sub">ค้นเอง ไม่ index ก่อน</text>
+      <text x="84" y="192" text-anchor="middle" class="mono" fill="#222b2e">auto-compaction</text><text x="84" y="208" text-anchor="middle" class="sub">สรุปเมื่อใกล้เต็ม</text>
+      <text x="84" y="236" text-anchor="middle" class="mono" fill="#222b2e">skills</text><text x="84" y="252" text-anchor="middle" class="sub">โหลดตามงาน</text>
+
+      <rect x="156" y="36" width="128" height="26" rx="6" fill="#c07415"/><text x="220" y="54" text-anchor="middle" class="lbl-w" font-size="12">TOOLS</text>
+      <rect x="156" y="62" width="128" height="204" fill="#fff" stroke="#ddd5c6"/>
+      <text x="220" y="80" text-anchor="middle" class="mono" fill="#c07415">บท 4 · 10</text>
+      <text x="220" y="104" text-anchor="middle" class="mono" fill="#222b2e">Read·Edit·Write</text><text x="220" y="120" text-anchor="middle" class="sub">ไฟล์ทุกภาษา</text>
+      <text x="220" y="148" text-anchor="middle" class="mono" fill="#222b2e">Glob·Grep</text><text x="220" y="164" text-anchor="middle" class="sub">มือค้นของ agent</text>
+      <text x="220" y="192" text-anchor="middle" class="mono" fill="#222b2e">Bash</text><text x="220" y="208" text-anchor="middle" class="sub">ประตูเปิดโลก</text>
+      <text x="220" y="236" text-anchor="middle" class="mono" fill="#222b2e">subagent</text><text x="220" y="252" text-anchor="middle" class="sub">งานรกโยนให้ลูก</text>
+
+      <rect x="292" y="36" width="128" height="26" rx="6" fill="#5a8a5e"/><text x="356" y="54" text-anchor="middle" class="lbl-w" font-size="12">FEEDBACK</text>
+      <rect x="292" y="62" width="128" height="204" fill="#fff" stroke="#ddd5c6"/>
+      <text x="356" y="80" text-anchor="middle" class="mono" fill="#5a8a5e">บท 5</text>
+      <text x="356" y="104" text-anchor="middle" class="mono" fill="#222b2e">เทสต์ผ่าน Bash</text><text x="356" y="120" text-anchor="middle" class="sub">เห็น error ดิบเต็ม ๆ</text>
+      <text x="356" y="148" text-anchor="middle" class="mono" fill="#222b2e">lint·typecheck</text><text x="356" y="164" text-anchor="middle" class="sub">กติกาอัตโนมัติ</text>
+      <text x="356" y="192" text-anchor="middle" class="mono" fill="#222b2e">screenshot</text><text x="356" y="208" text-anchor="middle" class="sub">งาน UI เห็นภาพจริง</text>
+      <text x="356" y="236" text-anchor="middle" class="mono" fill="#222b2e">exit code</text><text x="356" y="252" text-anchor="middle" class="sub">รู้ผลทุกคำสั่ง</text>
+
+      <rect x="428" y="36" width="128" height="26" rx="6" fill="#b3402e"/><text x="492" y="54" text-anchor="middle" class="lbl-w" font-size="12">GUARDRAILS</text>
+      <rect x="428" y="62" width="128" height="204" fill="#fff" stroke="#ddd5c6"/>
+      <text x="492" y="80" text-anchor="middle" class="mono" fill="#b3402e">บท 6</text>
+      <text x="492" y="104" text-anchor="middle" class="mono" fill="#222b2e">permission modes</text><text x="492" y="120" text-anchor="middle" class="sub">หลายระดับอิสระ</text>
+      <text x="492" y="148" text-anchor="middle" class="mono" fill="#222b2e">allowlist</text><text x="492" y="164" text-anchor="middle" class="sub">จำคำตอบเดิม</text>
+      <text x="492" y="192" text-anchor="middle" class="mono" fill="#222b2e">hooks</text><text x="492" y="208" text-anchor="middle" class="sub">เบรกที่เป็นโค้ด</text>
+      <text x="492" y="236" text-anchor="middle" class="mono" fill="#222b2e">sandbox·worktree</text><text x="492" y="252" text-anchor="middle" class="sub">กรงวิ่งเต็มสปีด</text>
+
+      <rect x="564" y="36" width="136" height="26" rx="6" fill="#54625f"/><text x="632" y="54" text-anchor="middle" class="lbl-w" font-size="12">OBSERVABILITY</text>
+      <rect x="564" y="62" width="136" height="204" fill="#fff" stroke="#ddd5c6"/>
+      <text x="632" y="80" text-anchor="middle" class="mono">บท 7 · 8</text>
+      <text x="632" y="104" text-anchor="middle" class="mono" fill="#222b2e">narration สด</text><text x="632" y="120" text-anchor="middle" class="sub">เล่าว่ากำลังทำอะไร</text>
+      <text x="632" y="148" text-anchor="middle" class="mono" fill="#222b2e">transcript</text><text x="632" y="164" text-anchor="middle" class="sub">ย้อนดูได้ทุกรอบ</text>
+      <text x="632" y="192" text-anchor="middle" class="mono" fill="#222b2e">/cost</text><text x="632" y="208" text-anchor="middle" class="sub">token · เงิน · เวลา</text>
+      <text x="632" y="236" text-anchor="middle" class="mono" fill="#222b2e">เพดานรอบ/งบ</text><text x="632" y="252" text-anchor="middle" class="sub">กัน doom loop</text>
+
+      <text x="360" y="300" text-anchor="middle" class="sub">ทุกช่องคือคำตอบของ trade-off ที่บทก่อนหน้าตั้งไว้ — ไม่มีชิ้นไหนอยู่ตรงนั้นโดยบังเอิญ</text>
+    </svg>
+    <figcaption><b>FIG 12.1</b> — anatomy ของ Claude Code บนโครง 5 ชิ้น · ลองผ่า harness ตัวอื่นที่พี่ใช้ดูจะพบว่าลงโครงเดียวกันได้เสมอ</figcaption>
+  </figure>
+
+  <h3>12.1 การตัดสินใจที่น่าผ่าที่สุดสามเรื่อง</h3>
+  <p><strong>เรื่องแรก: ทำไม tools มีไม่กี่ตัว และไม่มี tool เฉพาะภาษา</strong> · ไม่มี <code>refactor_python</code> ไม่มี <code>fix_css</code> — มีแต่ Read/Edit/Bash/Glob/Grep ที่ compose กันได้ครอบงานแทบทุกแบบ · นี่คือหลัก "จำนวนพอดี" ของบทที่ 4 แบบสุดทาง: เครื่องมือ general ไม่กี่ตัว = schema ไม่ท่วม context ไม่มีตัวเลือกให้สับสน · ราคาที่จ่าย: <code>Bash</code> กลายเป็นประตูที่เปิดได้ทุกอย่าง — จึงเป็นจุดที่ permission ต้องละเอียดที่สุด (บทที่ 6) · เห็นไหมครับ การตัดสินใจฝั่ง tools ลากการตัดสินใจฝั่ง guardrails ตามมา — ชิ้นส่วน 5 ชิ้นไม่เคยออกแบบแยกกันได้</p>
+  <p><strong>เรื่องที่สอง: ทำไมไม่ index repo ล่วงหน้า</strong> · หลายระบบยุคก่อนสร้าง index/embedding ของทั้ง repo ไว้ค้น — Claude Code เลือกทางตรงข้าม: ให้ agent ใช้ Glob/Grep ค้นสด ๆ เอาตอนต้องใช้ · คือ just-in-time retrieval (บทที่ 3) เต็มรูปแบบ: ไม่มี index ที่ stale ไม่ต้อง sync และ agent ตัดสินใจเองว่าค้นอะไร — แลกกับการเสียเวลาไม่กี่วินาทีต่อการค้น ซึ่งถูกกว่า context ที่เสียไปกับของไม่เกี่ยวมาก</p>
+  <p><strong>เรื่องที่สาม: hooks — จุดเสียบ guardrail ที่เป็นโค้ด</strong> · กติกาบางอย่างสำคัญเกินกว่าจะ "ขอร้อง" ผ่าน prompt (โมเดลอาจลืม/ถูกหลอก — บทที่ 6 สอนแล้ว) · hooks ให้ผู้ใช้เขียนเช็คของตัวเองที่รัน<em>ก่อน/หลังทุก tool call</em>: ห้ามแตะไฟล์นี้ รัน formatter หลังแก้ทุกครั้ง เตือนเมื่อจะรันคำสั่งอันตราย — เบรกที่เป็นโค้ดบังคับได้ 100% ไม่ใช่คำขอร้องที่หวังว่าโมเดลจะฟัง · นี่คือหลัก "ชั้นแข็ง" ของบทที่ 6 ที่เปิดให้ผู้ใช้ต่อเอง</p>
+
+  <h3>12.2 สิ่งที่ Claude Code สอนเรื่องการออกแบบ harness</h3>
+  <ul>
+    <li><strong>default ปลอดภัย แต่ไม่รำคาญ</strong> — เริ่มด้วยการถาม แล้ว "จำ" คำอนุมัติ (allowlist) ให้ความถี่การถามลดลงเอง — ตรงตำราสมดุลของบทที่ 6</li>
+    <li><strong>ยืดหยุ่นกับคุมได้ ไม่ใช่ขั้วตรงข้าม</strong> — Bash เปิดโลกเต็มที่ + permission/hooks คุมเข้ม = ได้ทั้งสอง</li>
+    <li><strong>ทุกจุดขยายเปิดให้ผู้ใช้</strong> — MCP (เพิ่ม tools), hooks (เพิ่ม guardrails), skills + CLAUDE.md (เพิ่มความรู้), subagents (ขยายสเกล) — ผู้ใช้ต่อเติมได้โดยไม่ต้องรอ vendor · harness ที่ดีจึงไม่ใช่ product ปิด แต่เป็น <strong>platform</strong> ที่คนอื่นสร้างต่อได้</li>
+  </ul>
+
+  <div class="note"><span class="t">สรุปบทที่ 12</span>Claude Code ลงโครง 5 ชิ้นของบทที่ 1 ได้พอดี: CLAUDE.md/compaction/agentic search = context · Read/Edit/Bash + MCP = tools · เทสต์/lint ผ่าน Bash = feedback · permission/allowlist/hooks/sandbox = guardrails · narration/transcript//cost = observability · การตัดสินใจเด่น: tools น้อยแบบ general (Bash เปิดโลก + permission เข้มชดเชย), ค้นสดแทน index ล่วงหน้า, hooks = เบรกที่เป็นโค้ด · บทเรียนใหญ่: ชิ้นส่วนทั้งห้าออกแบบแยกกันไม่ได้ และ harness ที่ดีคือ platform</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH13 ============================ -->
+<section class="chapter" id="ch13">
+  <div class="ch-head">
+    <div class="row"><div class="num">13</div><h2>ออกแบบ harness ของตัวเอง — หลักคิดก่อนโค้ด</h2></div>
+    <span class="chip" style="background:var(--l4-soft);color:var(--l4)">LEVEL 4 · แงะของจริง</span>
+  </div>
+
+  <p>ถึงจุดที่หลายคนรอ: อยากสร้าง harness ของตัวเอง เริ่มตรงไหน? · คำตอบขัดใจนิดหน่อย: <strong>อย่าเพิ่งเปิด editor</strong> — เพราะการตัดสินใจที่ชี้เป็นชี้ตายทั้งหมดเกิดก่อนโค้ดบรรทัดแรก</p>
+
+  <h3>13.1 ลำดับการคิด (ไม่ใช่ลำดับการเขียนโค้ด)</h3>
+  <ul>
+    <li><strong>① เริ่มจาก verifier</strong> — คำถามแรกไม่ใช่ "ใช้โมเดลไหน" แต่คือ <em>"งานนี้รู้ได้ยังไงว่าถูก"</em> (บทที่ 5) · ถ้ายังตอบไม่ได้ agent ที่สร้างจะเป็นแค่เครื่องผลิตของที่คนต้องนั่งตรวจเองทั้งหมด — ออกแบบหรือสร้าง verifier ให้ได้ก่อนอย่างอื่นทั้งหมด</li>
+    <li><strong>② เลือก tools น้อยที่สุดที่พองาน</strong> — เริ่ม 2–5 ตัว (บทที่ 4) อย่าใส่เผื่อ · เครื่องมือที่ "อาจได้ใช้" คือ context ที่เสียเปล่าและตัวเลือกที่ชวนสับสน</li>
+    <li><strong>③ วาง guardrails ตามแผนที่จริง</strong> — ไล่แผนที่ blast radius × reversibility (บทที่ 6) ของงานนี้โดยเฉพาะ: จุดไหนคือหายนะที่แท้จริง จุดนั้นคือที่ที่ด่านต้องอยู่</li>
+    <li><strong>④ เติม memory / subagents เมื่อเจ็บจริง</strong> — อย่าใส่วันแรก · ยังไม่เจอปัญหา context ยาว ก็ยังไม่ต้องมียาแก้ (บทที่ 9–10 รอได้เสมอ)</li>
+  </ul>
+
+  <h3>13.2 minimal harness — แก่นมันเล็กแค่นี้</h3>
+  <p>โค้ดข้างล่างคือ harness ที่ทำงานได้จริงทั้งตัว ไม่ถึง 40 บรรทัด — loop จากบทที่ 2 + เครื่องมือไม่กี่ตัว + verifier หนึ่งตัว + การ์ดจากบทที่ 6 และ 8 · สังเกตว่าทุกบรรทัดคือบทหนึ่งของเล่มนี้:</p>
+  <div class="prompt-label" style="color:var(--ink-soft)">▸ pseudocode: minimal harness ทั้งระบบ</div>
+  <pre><code><span class="cm"># minimal harness — loop + tools + verifier เดียว</span>
+TOOLS = [
+  read_file(path),                      <span class="cm"># ตา (บท 4)</span>
+  write_file(path, content),            <span class="cm"># มือ — จุดเดียวที่แตะโลกจริง</span>
+  run_tests(),                          <span class="cm"># verifier — หัวใจของทั้งระบบ (บท 5)</span>
+]
+
+SYSTEM = <span class="gd">"""คุณคือ agent แก้โค้ดใน repo นี้
+อ่านไฟล์ก่อนแก้เสมอ · แก้ให้เล็กที่สุดที่พอ
+ห้ามบอกว่าเสร็จ จนกว่า run_tests จะผ่าน"""</span>   <span class="cm"># กติกา "เสร็จจริง" (บท 8)</span>
+
+def agent(task, <span class="ph">max_turns=30</span>):            <span class="cm"># เพดานกัน doom loop (บท 8)</span>
+    history = [task]
+    for turn in range(max_turns):
+        resp = model(SYSTEM, TOOLS, history)
+
+        if resp.is_text:                  <span class="cm"># โมเดลบอกว่าจบงาน</span>
+            if not tests_passed(history): <span class="cm"># เสร็จปลอม? → ตีกลับ</span>
+                history += ["ยังไม่เห็นเทสต์ผ่าน — รัน run_tests ก่อนสรุป"]
+                continue
+            return resp.text
+
+        call = resp.tool_call
+        if call.name == "write_file" and not allowed(call.path):
+            history += [call, "path นี้ต้องให้คนอนุมัติก่อน"]  <span class="cm"># guardrail (บท 6)</span>
+            continue
+
+        result = execute(call)
+        history += [call, truncate(result, 2000)]  <span class="cm"># กัน context บวม (บท 3)</span>
+        log(turn, call.name, cost(history))        <span class="cm"># observability (บท 7)</span>
+
+    return "หมดโควตารอบ — สรุปที่ทำไป + จุดที่ติด ให้คนดูต่อ"</code></pre>
+  <p>ที่เหลือทั้งหมดของ harness ระดับ production — compaction ฉลาด ๆ, permission หลายชั้น, subagents, eval suite — คือ<strong>ความประณีต</strong>ที่ค่อย ๆ เติมบนแก่นนี้เมื่องานเรียกร้อง ไม่ใช่ของที่ต้องมีวันแรก</p>
+
+  <h3>13.3 อย่าสร้างเอง ถ้าของสำเร็จรูปพอ</h3>
+  <p>ความจริงที่ควรพูดตรง ๆ: งานส่วนใหญ่<strong>ไม่ต้องสร้าง harness ใหม่</strong> · Claude Code + <code>CLAUDE.md</code> + skills + hooks + MCP ปรับแต่งได้ไกลกว่าที่คิดมาก — และการปรับแต่ง harness สำเร็จรูปให้เข้ากับทีม<em>ก็คือ harness engineering</em> เหมือนกัน เป็นจุดเริ่มที่ถูกต้องสำหรับ 90% ของงาน</p>
+  <p>สร้างเองเมื่อไหร่: workflow เฉพาะทางที่ harness ทั่วไปไม่รองรับ (agent ฝังใน product ของเรา, loop พิเศษเฉพาะโดเมน), ต้องคุม infra/ข้อมูลระดับเข้มข้น, หรือ harness คือตัว product เอง · และถ้าจะสร้าง — <strong>Agent SDK</strong> และ framework ต่าง ๆ มี loop + tool plumbing สำเร็จให้แล้ว: เวลาของเราควรหมดไปกับชิ้นส่วนทั้งห้าของบทที่ 1 ไม่ใช่ไปกับท่อ</p>
+
+  <h3>13.4 checklist ก่อนลงมือ</h3>
+  <pre><code><span class="cm"># CHECKLIST — ตอบให้ครบก่อนเขียนโค้ดบรรทัดแรก</span>
+
+[ ] งานนี้มี verifier ที่เชื่อได้ไหม?      <span class="gd">ไม่มี → หยุด ออกแบบ verifier ก่อน (บท 5)</span>
+[ ] ของสำเร็จรูป + ปรับแต่ง พอไหม?      <span class="gd">พอ → ใช้เลย อย่าสร้าง (บท 13.3)</span>
+[ ] tools ชุดเล็กสุดที่จบงานคืออะไร?    <span class="gd">เริ่ม 2–5 ตัว — เพิ่มเมื่อเจ็บจริง (บท 4)</span>
+[ ] action ไหนย้อนกลับยากสุด?          <span class="gd">จุดนั้นต้องมีด่าน / sandbox (บท 6)</span>
+[ ] นิยาม "เสร็จ" + เพดานอยู่ตรงไหน?    <span class="gd">verifier ก่อนจบ · max turns · งบ (บท 8)</span>
+[ ] เก็บ transcript ตั้งแต่วันแรกไหม?   <span class="gd">debug ไม่ได้ถ้ามองไม่เห็น (บท 7)</span>
+[ ] มีชุดงานทดสอบ ~10 ชิ้นไว้เทียบไหม?  <span class="gd">ไม่มีตัวเลข = ปรับมั่ว (บท 11)</span></code></pre>
+
+  <div class="note"><span class="t">สรุปบทที่ 13</span>ลำดับคิด: verifier ก่อน → tools น้อยสุดที่พอ → guardrails ตามแผนที่ความเสี่ยงจริง → memory/subagents เมื่อเจ็บจริง · แก่นของ harness เล็กมาก (loop ไม่ถึง 40 บรรทัด) — ที่เหลือคือความประณีตที่เติมทีหลังได้ · 90% ของงานควรปรับแต่งของสำเร็จรูป ไม่ใช่สร้างใหม่ — และถ้าสร้าง ใช้ SDK จัดการท่อ เวลาเราไว้คิดชิ้นส่วนทั้งห้า</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+<!-- ============================ CH14 ============================ -->
+<section class="chapter" id="ch14">
+  <div class="ch-head">
+    <div class="row"><div class="num">14</div><h2>อนาคตของศาสตร์นี้ — และปิดเล่ม</h2></div>
+    <span class="chip" style="background:var(--l4-soft);color:var(--l4)">LEVEL 4 · ปิดเล่ม</span>
+  </div>
+
+  <p>คำถามที่ค้างคอคนทั้งวงการ: <strong>โมเดลเก่งขึ้นทุกปี — แล้ว harness จะบางลงจนหายไปไหม?</strong> · คำถามนี้มีชื่อเล่นในวงการว่า <em>bitter lesson</em> (บทเรียนขมของงานวิจัย AI): โครงช่วยคิดที่มนุษย์ประดิษฐ์ แพ้พลัง scale ของโมเดลเสมอมา — และมันก็จริงซ้ำแล้วซ้ำเล่า</p>
+
+  <h3>14.1 สองฝั่งของคำตอบ</h3>
+  <p><strong>ฝั่ง "harness จะบางลง"</strong> ชี้หลักฐานชัด: เทคนิคที่เคยต้องสั่ง (คิดทีละขั้น) กลายเป็นความสามารถในตัวโมเดล scaffold เต็มยศของปี 2024 จำนวนมากตายเพราะโมเดลปี 2025 ทำเองได้หมด · ถ้าเส้นนี้ลากต่อ — โครงที่สร้างมา "ช่วยโมเดลคิด" จะโดนกลืนเรื่อย ๆ</p>
+  <p><strong>ฝั่ง "harness จะอยู่"</strong> ถามกลับด้วยภาพง่าย ๆ: ต่อให้จ้างวิศวกรที่เก่งที่สุดในโลก เขาก็ยังต้องมี IDE, สิทธิ์เข้าระบบ, code review และการวัดผลงาน — ไม่ใช่เพราะเขาโง่ แต่เพราะ<strong>นั่นคือ interface ระหว่างความสามารถกับโลกจริง</strong> · tools, permissions, evals, observability ไม่ได้มีไว้ชดเชยความโง่ของโมเดล — มันคือการเชื่อมพลังเข้ากับความรับผิดชอบ ซึ่งไม่มีวันตกยุคเพราะโมเดลฉลาดขึ้น</p>
+  <p>คำตอบที่น่าจะใกล้จริง: <strong>harness จะบางลงในชั้น "ช่วยคิด" แต่อยู่ยาวในชั้น "ต่อกับโลก"</strong> — prompt trick จะตายไปเรื่อย ๆ ตาม bitter lesson แต่ verifier, guardrails, การวัดผล จะยิ่งสำคัญขึ้นเมื่อ agent รับงานใหญ่ขึ้นและอิสระมากขึ้น · สังเกตว่าเสาหลักของเล่มนี้ตั้งใจอยู่ฝั่งหลังเกือบทั้งหมด</p>
+
+  <h3>14.2 ทิศทางที่มองเห็นแล้ว</h3>
+  <ul>
+    <li><strong>มาตรฐานเปิดชนะ</strong> — MCP ทำให้ tools เป็นของกลางข้าม harness · แนวโน้มเดียวกันกำลังไล่มาตรฐานส่วนอื่น ๆ ของ harness ตามมา</li>
+    <li><strong>agent ใช้ agent</strong> — โครง orchestration ของบทที่ 10 กำลังโตจาก "ฟีเจอร์" เป็นวิธีทำงานหลัก: งานใหญ่ = ฝูง agent ที่มีคนดูแลผ่าน observability ชั้นดี</li>
+    <li><strong>harness กลายเป็น infrastructure ปกติ</strong> — แบบเดียวกับที่ CI/CD เคยเป็นของแปลกแล้ววันนี้ทุกทีมมี · อีกไม่นาน "ทีมนี้มี eval suite กับ permission policy ของ agent ไหม" จะเป็นคำถามพื้นฐานเท่ากับ "มี git ไหม"</li>
+  </ul>
+
+  <h3>14.3 ปิดบันไดสาย AI</h3>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="บันไดสามขั้นของสายทักษะ AI: ขั้นแรกเล่มหก Prompt ที่ดี ใช้ AI เป็น ขั้นที่สองเล่มเจ็ด Prompt 0 to Hero สั่ง AI ระดับโปร ขั้นสูงสุดเล่มแปดเล่มนี้ ออกแบบระบบรอบ AI โดยมี AI Brain เล่มสี่เป็นแอปพลิเคชันข้างทาง ไม่ใช่ขั้นบันได">
+      <line x1="30" y1="260" x2="700" y2="260" stroke="#222b2e" stroke-width="2"/>
+      <rect x="40" y="40" width="180" height="76" rx="10" fill="none" stroke="#54625f" stroke-width="1.2" stroke-dasharray="6 5"/>
+      <text x="130" y="64" text-anchor="middle" class="mono">#04 · AI Brain</text>
+      <text x="130" y="84" text-anchor="middle" class="sub">แอปพลิเคชันข้างทาง</text>
+      <text x="130" y="100" text-anchor="middle" class="sub">ไม่ใช่ขั้นบันได</text>
+      <path d="M 220 78 C 260 80, 285 96, 300 116" class="flow dash"/>
+      <rect x="40" y="190" width="200" height="70" rx="10" fill="#e6efe4" stroke="#5a8a5e" stroke-width="1.4"/>
+      <text x="140" y="212" text-anchor="middle" class="mono" fill="#5a8a5e">#06 · Prompt ที่ดี</text>
+      <text x="140" y="232" text-anchor="middle" class="lbl">ใช้ AI เป็น</text>
+      <text x="140" y="250" text-anchor="middle" class="sub">คุยกับ AI ให้ได้งาน</text>
+      <rect x="260" y="120" width="200" height="140" rx="10" fill="#f8ecd8" stroke="#c07415" stroke-width="1.4"/>
+      <text x="360" y="144" text-anchor="middle" class="mono" fill="#c07415">#07 · Prompt 0 → Hero</text>
+      <text x="360" y="166" text-anchor="middle" class="lbl">สั่ง AI ระดับโปร</text>
+      <text x="360" y="186" text-anchor="middle" class="sub">คุมผลลัพธ์ได้เป๊ะ</text>
+      <text x="360" y="204" text-anchor="middle" class="sub">ต่อ AI เข้าเครื่องมือและระบบ</text>
+      <rect x="480" y="50" width="200" height="210" rx="10" fill="#0e6e63"/>
+      <text x="580" y="80" text-anchor="middle" class="mono" fill="#9ed0c5">#08 · เล่มนี้</text>
+      <text x="580" y="104" text-anchor="middle" class="lbl-w">ออกแบบระบบรอบ AI</text>
+      <text x="580" y="126" text-anchor="middle" class="sub-w">สร้างระบบที่ agent</text>
+      <text x="580" y="144" text-anchor="middle" class="sub-w">ทำงานเองได้อย่างปลอดภัย</text>
+      <path d="M 220 186 C 238 172, 246 166, 256 158" class="flow-a" marker-end="url(#ar-a)"/>
+      <path d="M 440 116 C 458 102, 466 96, 476 88" class="flow-a" marker-end="url(#ar-a)"/>
+      <text x="360" y="288" text-anchor="middle" class="sub">บันไดสายทักษะ AI ของ collection — เล่มนี้คือขั้นปิด</text>
+    </svg>
+    <figcaption><b>FIG 14.1</b> — สามขั้นของการเดินทาง: ใช้เป็น → สั่งเป็น → ออกแบบระบบเป็น · ai-brain (#04) คือแอปพลิเคชันที่แวะสร้างข้างทาง ไม่ใช่ขั้นทักษะ</figcaption>
+  </figure>
+
+  <p>ถ้ามองย้อนทั้งสาย จะเห็นว่าแต่ละขั้นตอบคำถามคนละชั้น: <strong>#06</strong> — พูดกับ AI ยังไงให้ได้งาน · <strong>#07</strong> — บังคับผลลัพธ์ยังไงให้เป๊ะพอเอาไปต่อระบบ · <strong>#08</strong> — ออกแบบระบบยังไงให้ AI ทำงานเองได้โดยเราไว้ใจได้ · และที่ซ่อนอยู่ในทุกขั้น: ยิ่งให้อิสระมาก ยิ่งต้องออกแบบสิ่งรอบตัวมันดี</p>
+
+  <h3>14.4 ทักษะที่ไม่หมดอายุ</h3>
+  <p>โมเดลรุ่นถัดไปจะกลืนเทคนิคบางส่วนของเล่มนี้ไป — ตามธรรมชาติของ bitter lesson · แต่สังเกตว่าทักษะที่เล่มนี้ฝึกจริง ๆ ไม่ใช่เทคนิค: <strong>นิยามงานให้ชัดจนวัดได้</strong> (บท 8, 10) · <strong>ออกแบบ feedback ให้ระบบตรวจตัวเองได้</strong> (บท 5) · <strong>ตัดสินว่าอะไรเสี่ยงและวางด่านให้ถูกจุด</strong> (บท 6) · <strong>วัดผลอย่างซื่อสัตย์ก่อนเชื่อว่าดีขึ้น</strong> (บท 11) — สี่อย่างนี้คือทักษะวิศวกรรมแท้ ๆ ที่อยู่มาก่อน AI และจะอยู่ต่อหลังโมเดลทุกรุ่นที่เรารู้จักวันนี้เกษียณไปแล้ว</p>
+
+  <div class="note"><span class="t">จบบันไดสาย AI 🏁</span>เดินมาครบสามขั้น: <strong>ใช้ AI เป็น</strong> (เข้าใจกลไกเดาคำถัดไป เขียน prompt ครบส่วน) → <strong>สั่ง AI ระดับโปร</strong> (few-shot, grounding, chaining, ปลอดภัย, ต่อเครื่องมือ) → <strong>ออกแบบระบบรอบ AI</strong> (loop, context, tools, feedback, guardrails, observability, memory, subagents, evals) · โมเดลจะเก่งขึ้นทุกปีโดยเราไม่ต้องทำอะไรเลย — ความได้เปรียบเดียวที่สั่งสมได้จริงคือ<strong>ความเข้าใจระบบรอบตัวมัน</strong> ซึ่งตอนนี้อยู่ในมือพี่ครบแล้ว · ที่เหลือคือสิ่งเดียวกับทุกเล่มใน collection นี้: เอาไปใช้จริง แล้วให้ของจริงสอนต่อ</div>
+  <div class="chapter-end">· · ·</div>
+</section>
+
+
+<footer>
+  <p><b>Harness Engineering — ฉบับเข้าใจถึงแก่น</b> — ศาสตร์ของการออกแบบระบบรอบ AI agent สำหรับคนที่อยากเข้าใจว่าทำไมโมเดลเดียวกันถึงเก่งไม่เท่ากัน และออกแบบเองได้</p>
+  <p>เรียงพิมพ์ด้วย Bai&nbsp;Jamjuree &amp; Anuphan · ภาคต่อของ <a href="https://tayakorn221.github.io/prompt-engineering-handbook/">Prompt 0 → Hero</a> · ส่วนหนึ่งของ <a href="https://tayakorn221.github.io/handbooks/">Handbooks — เขียนเพื่อเข้าใจ ไม่ใช่เพื่อท่องจำ</a> · โดย @tayakorn221 · 2026</p>
+</footer>
+
+</main>
+</div>
+
+<script>
+const pb=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;const sc=h.scrollTop/(h.scrollHeight-h.clientHeight||1);pb.style.width=(sc*100)+'%';},{passive:true});
+
+const links=[...document.querySelectorAll('.toc a')];
+const map=new Map();
+links.forEach(a=>{const el=document.getElementById(a.getAttribute('href').slice(1));if(el)map.set(el,a);});
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const a=map.get(e.target);if(a)a.classList.add('active');}});},{rootMargin:'-12% 0px -78% 0px',threshold:0});
+map.forEach((a,el)=>io.observe(el));
+
+const tg=document.getElementById('tocToggle'),toc=document.getElementById('toc');
+if(tg)tg.addEventListener('click',()=>toc.classList.toggle('open'));
+if(toc)toc.addEventListener('click',e=>{if(e.target.closest('a')&&innerWidth<=1080)toc.classList.remove('open');});
+
+// ปุ่มคัดลอกในกล่องโค้ดทุกกล่อง
+document.querySelectorAll('main pre').forEach(pre=>{
+  const btn=document.createElement('button');
+  btn.type='button';btn.className='copy-btn';btn.textContent='คัดลอก';
+  btn.setAttribute('aria-label','คัดลอกข้อความในกล่องนี้');
+  btn.addEventListener('click',()=>{
+    const code=pre.querySelector('code');
+    const text=((code?code.textContent:pre.textContent)||'').replace(/\s+$/,'');
+    const done=()=>{btn.textContent='คัดลอกแล้ว ✓';btn.classList.add('done');setTimeout(()=>{btn.textContent='คัดลอก';btn.classList.remove('done');},1600);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>copyFallback(text,done,btn));}
+    else{copyFallback(text,done,btn);}
+  });
+  pre.appendChild(btn);
+});
+function copyFallback(text,done,btn){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.top='-9999px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');done();}catch(e){btn.textContent='คัดลอกไม่ได้';}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
