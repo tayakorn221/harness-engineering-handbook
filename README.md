@@ -14,7 +14,7 @@
 - **L3 ขยายระบบ** — memory & skills (progressive disclosure), subagents & orchestration, evals
 - **L4 แงะของจริง** — ผ่า Claude Code เป็น case study, ออกแบบ harness ของตัวเอง, อนาคตของศาสตร์นี้
 
-เน้นเข้าใจกลไกว่า "ทำไม" ไม่ใช่ท่องสูตร · ใช้ Claude Code เป็นตัวอย่างประจำเล่มแต่หลักการเป็นกลางใช้ได้ทุก harness · ภาษาไทย พร้อมไดอะแกรม 13 รูป · ส่วนหนึ่งของ [Handbooks](https://tayakorn221.github.io/handbooks/) — เขียนเพื่อเข้าใจ ไม่ใช่เพื่อท่องจำ
+เน้นเข้าใจกลไกว่า "ทำไม" ไม่ใช่ท่องสูตร · ใช้ Claude Code เป็นตัวอย่างประจำเล่มแต่หลักการเป็นกลางใช้ได้ทุก harness · ภาษาไทย พร้อมไดอะแกรม 20 รูป · ส่วนหนึ่งของ [Handbooks](https://tayakorn221.github.io/handbooks/) — เขียนเพื่อเข้าใจ ไม่ใช่เพื่อท่องจำ
 
 ## ไฟล์
 

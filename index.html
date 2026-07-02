@@ -299,6 +299,39 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <li><strong>ประวัติการคุย + ผล tool ทุกรอบที่ผ่านมา</strong> — ส่วนเดียวที่โตขึ้นเรื่อย ๆ และจะกลายเป็นปัญหาหลักของบทที่ 3</li>
   </ul>
 
+  <figure class="fig">
+    <svg viewBox="0 0 720 296" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ทุกรอบของ loop harness ประกอบกองเอกสารสี่ชั้นขึ้นใหม่: system prompt ของ harness, tool schemas, ประวัติการคุย และผล tool รอบก่อน ๆ แล้วส่งทั้งก้อนให้โมเดลอ่านเพื่อตอบเป็นข้อความหรือ tool call ผลลัพธ์ถูกยัดกลับเข้ากองสำหรับรอบถัดไป โมเดลไม่ได้จำอะไรเอง มันเห็นของที่ถูกประกอบให้ใหม่ทุกรอบ">
+      <rect x="52" y="28" width="256" height="192" rx="12" fill="none" stroke="#54625f" stroke-width="1.2" stroke-dasharray="6 5"/>
+      <rect x="60" y="36" width="240" height="44" rx="7" fill="#0a5048"/>
+      <text x="180" y="54" text-anchor="middle" class="lbl-w" font-size="12">system prompt ของ harness</text>
+      <text x="180" y="71" text-anchor="middle" class="sub-w">บุคลิก + กติกา (คงที่)</text>
+      <rect x="60" y="84" width="240" height="40" rx="7" fill="#0e6e63"/>
+      <text x="180" y="101" text-anchor="middle" class="lbl-w" font-size="12">tool schemas</text>
+      <text x="180" y="117" text-anchor="middle" class="sub-w">เมนูเครื่องมือ (คงที่)</text>
+      <rect x="60" y="128" width="240" height="40" rx="7" fill="#c07415"/>
+      <text x="180" y="145" text-anchor="middle" class="lbl-w" font-size="12">ประวัติการคุย</text>
+      <text x="180" y="161" text-anchor="middle" class="sub-w">โตขึ้นทุกรอบ</text>
+      <rect x="60" y="172" width="240" height="40" rx="7" fill="#b3402e"/>
+      <text x="180" y="189" text-anchor="middle" class="lbl-w" font-size="12">ผล tool รอบก่อน ๆ</text>
+      <text x="180" y="205" text-anchor="middle" class="sub-w">โตเร็วสุด</text>
+      <text x="180" y="242" text-anchor="middle" class="sub">ประกอบเสร็จ = สิ่งที่โมเดล "เห็น" ในรอบนั้น</text>
+
+      <path d="M 312 124 H 418" class="flow-t" marker-end="url(#ar-t)"/>
+      <text x="366" y="112" text-anchor="middle" class="mono" fill="#0a5048">ส่งทั้งก้อน</text>
+      <rect x="424" y="96" width="130" height="56" rx="9" fill="#26302f"/>
+      <text x="489" y="118" text-anchor="middle" class="lbl-w">โมเดล</text>
+      <text x="489" y="136" text-anchor="middle" class="sub-w">อ่านทั้งหมด → ตอบ</text>
+      <path d="M 554 124 H 598" class="flow" marker-end="url(#ar)"/>
+      <rect x="602" y="100" width="102" height="48" rx="9" fill="#fff" stroke="#c07415" stroke-width="1.4"/>
+      <text x="653" y="119" text-anchor="middle" class="lbl" font-size="12">คำตอบ หรือ</text>
+      <text x="653" y="137" text-anchor="middle" class="lbl" font-size="12">tool call</text>
+      <path d="M 653 148 C 653 240, 420 250, 316 196" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <text x="500" y="272" text-anchor="middle" class="sub" fill="#c07415">ผลถูกยัดกลับเข้ากอง — รอบหน้า harness ประกอบใหม่ทั้งชุด</text>
+      <text x="500" y="290" text-anchor="middle" class="sub">โมเดลไม่ได้ "จำ" — มันเห็นของที่ถูกประกอบให้ใหม่ทุกรอบ</text>
+    </svg>
+    <figcaption><b>FIG 2.1</b> — สิ่งที่โมเดลเห็นในหนึ่งรอบ ไม่ใช่ความจำ แต่คือกองเอกสารที่ harness จับประกอบสด ๆ — ใครคุมการประกอบ คนนั้นคุมพฤติกรรม</figcaption>
+  </figure>
+
   <h3>2.3 แผนที่ของทั้งเล่ม — ทุกบทยึดจุดใดจุดหนึ่งของ loop</h3>
   <p>ความลับของเล่มนี้: <strong>ทุกบทที่เหลือคือการปรับแต่งจุดใดจุดหนึ่งของวงจรข้างบน</strong> · ดูรูปนี้ค้างไว้ — มันคือแผนที่ที่เราจะเดินตลอดเล่ม:</p>
 
@@ -345,7 +378,7 @@ footer a:hover{color:var(--red);border-color:var(--red)}
       <text x="30" y="372" class="mono">บท 7 · observability — มองเห็นทุกจุดของวง</text>
       <text x="690" y="372" text-anchor="end" class="mono">บท 11 · evals — วัดทั้งวงซ้ำ ๆ</text>
     </svg>
-    <figcaption><b>FIG 2.1</b> — แผนที่ประจำเล่ม: agent loop หนึ่งวง กับจุดที่แต่ละบทเข้าไปยึด · หลงบทไหน กลับมาดูรูปนี้</figcaption>
+    <figcaption><b>FIG 2.2</b> — แผนที่ประจำเล่ม: agent loop หนึ่งวง กับจุดที่แต่ละบทเข้าไปยึด · หลงบทไหน กลับมาดูรูปนี้</figcaption>
   </figure>
 
   <div class="use"><span class="t">คุณคือ harness — หลักการเล่มนี้ในเวอร์ชัน chat</span>ตอนใช้แชตธรรมดา ไม่มี harness มาช่วย เพราะ<strong>พี่นั่นแหละคือ harness</strong> ที่ทำทุกหน้าที่ด้วยมือ: เปิดแชตใหม่พร้อมสรุปงานที่ค้าง = <strong>compaction</strong> (บท 3) · แปะไฟล์เฉพาะตอนถึงจังหวะใช้ ไม่ยัดทั้งหมดแต่แรก = <strong>just-in-time context</strong> (บท 3) — และตัวพี่เองคือ "tool" ที่ไปหยิบข้อมูลมาให้ (บท 4) · ให้เกณฑ์แล้วสั่ง "ตรวจงานตัวเองตามเกณฑ์นี้ก่อนส่ง" = <strong>feedback loop</strong> (บท 5) · รู้ตัวว่า AI วนแก้ที่เดิม 3 รอบไม่หลุดสักที เลิกแล้วเปิดแชตใหม่ = <strong>stop condition</strong> (บท 8) · Custom Instructions / Projects ที่ตั้งค้างไว้ = <strong>memory</strong> (บท 9) · ส่วน permissions, observability, subagents, evals ไม่ต้องมี — เพราะพี่นั่งอ่านอยู่ทุกข้อความ อนุมัติเองทุกจังหวะ · ศาสตร์นี้จึงไม่ใช่เรื่องของคนสร้าง agent เท่านั้น — เข้าใจแล้ววิธีใช้ AI ประจำวันเปลี่ยนได้ทันที</div>
@@ -409,6 +442,38 @@ footer a:hover{color:var(--red);border-color:var(--red)}
 
   <h3>3.4 RAG ที่พี่รู้จัก คือ special case ของเรื่องนี้</h3>
   <p>เล่ม #07 สอน grounding/RAG ไว้แล้ว — ระบบค้นเอกสารที่เกี่ยวแล้วแปะให้โมเดล<em>ก่อน</em>ตอบ · มองผ่านเลนส์เล่มนี้ RAG คือ just-in-time retrieval แบบ <strong>push</strong>: ฝั่งระบบเดาว่าโมเดลต้องใช้อะไรแล้วป้อนให้ · agent ยุคนี้ขยับไปอีกขั้นเป็นแบบ <strong>pull</strong>: โมเดลถือเครื่องมือค้นเอง ตัดสินใจเองว่าจะค้นอะไร เมื่อไหร่ ค้นซ้ำกี่รอบ — วงการเรียก <em>agentic search</em> · หลักการเดียวกัน แต่ย้ายคนตัดสินใจจากระบบไปที่ตัว agent</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="เปรียบเทียบ RAG แบบ push ที่ระบบเดาเอกสารที่น่าจะเกี่ยวแล้วแปะให้โมเดลครั้งเดียวก่อนตอบ กับ agentic search แบบ pull ที่โมเดลถือเครื่องมือค้นเอง วนค้นดูผลแล้วค้นใหม่ให้แคบลงจนเจอของที่ใช่จริงค่อยตอบ">
+      <text x="24" y="26" font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1" fill="#54625f">RAG · ระบบ PUSH ให้</text>
+      <rect x="24" y="40" width="300" height="40" rx="8" fill="#fff" stroke="#ddd5c6"/>
+      <text x="174" y="65" text-anchor="middle" class="lbl" font-size="12">ระบบค้นเอกสารที่ "น่าจะเกี่ยว"</text>
+      <path d="M 174 80 V 102" class="flow" marker-end="url(#ar)"/>
+      <rect x="24" y="106" width="300" height="40" rx="8" fill="#f2ede3" stroke="#ddd5c6"/>
+      <text x="174" y="131" text-anchor="middle" class="lbl" font-size="12">แปะให้โมเดลก่อนตอบ — ครั้งเดียวจบ</text>
+      <path d="M 174 146 V 168" class="flow" marker-end="url(#ar)"/>
+      <rect x="24" y="172" width="300" height="40" rx="8" fill="#e2eeea" stroke="#0e6e63"/>
+      <text x="174" y="197" text-anchor="middle" class="lbl" font-size="12">โมเดลตอบจากที่ได้รับมา</text>
+      <text x="174" y="238" text-anchor="middle" class="sub">ระบบตัดสินใจแทนว่าโมเดลควรเห็นอะไร</text>
+      <text x="174" y="256" text-anchor="middle" class="sub">เดาเอกสารพลาด = จบตั้งแต่ยังไม่เริ่ม</text>
+
+      <line x1="360" y1="16" x2="360" y2="258" stroke="#ddd5c6"/>
+
+      <text x="396" y="26" font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1" fill="#54625f">AGENTIC SEARCH · โมเดล PULL เอง</text>
+      <rect x="396" y="40" width="300" height="40" rx="8" fill="#26302f"/>
+      <text x="546" y="65" text-anchor="middle" class="lbl-w" font-size="12">โมเดลถือเครื่องมือค้นเอง</text>
+      <path d="M 546 80 V 102" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="396" y="106" width="300" height="40" rx="8" fill="#f8ecd8" stroke="#c07415"/>
+      <text x="546" y="131" text-anchor="middle" class="lbl" font-size="12">ค้น → ดูผล → ค้นใหม่ให้แคบลง</text>
+      <path d="M 396 120 C 372 112, 372 74, 396 64" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <path d="M 546 146 V 168" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="396" y="172" width="300" height="40" rx="8" fill="#e2eeea" stroke="#0e6e63"/>
+      <text x="546" y="197" text-anchor="middle" class="lbl" font-size="12">ตอบเมื่อเจอของที่ใช่จริง</text>
+      <text x="546" y="238" text-anchor="middle" class="sub">โมเดลตัดสินใจเอง: ค้นอะไร เมื่อไหร่ กี่รอบ</text>
+      <text x="546" y="256" text-anchor="middle" class="sub">จ่ายเฉพาะที่หยิบ — ตรงหลัก just-in-time</text>
+    </svg>
+    <figcaption><b>FIG 3.2</b> — RAG คือ just-in-time แบบระบบ push ให้ · agent ยุคนี้ pull เอง — หลักเดียวกัน แต่คนตัดสินใจย้ายจากระบบไปอยู่ที่โมเดล</figcaption>
+  </figure>
 
   <div class="note"><span class="t">กฎหัวแม่มือของบทนี้</span>ทุก token ที่อยู่ใน context ต้องตอบได้ว่า <strong>"มันอยู่ตรงนั้นทำไม"</strong> — ถ้าคำตอบคือ "เผื่อได้ใช้" หรือ "มันค้างมาจากงานเมื่อกี้" นั่นคือขยะที่ทั้งแพงและทำให้โง่ลง</div>
 
@@ -652,6 +717,51 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <li><strong>ชั้นซอฟต์: tool result คือ data ไม่ใช่ instruction</strong> — harness ที่ดีระบุที่มาของข้อมูลให้ชัด และ system prompt สอนโมเดลว่าข้อความในผล tool เป็นข้อมูลให้ประมวล ห้ามทำตามคำสั่งในนั้น (สืบสายตรงจากการ "คั่นข้อมูลออกจากคำสั่ง" ที่ #07 สอน — และโยงบท 4: ผล tool คือ input ที่เราควบคุมรูปแบบได้)</li>
     <li><strong>ชั้นแข็ง: จำกัดความเสียหายด้วยระบบ</strong> — เพราะ<strong>โมเดลฉลาดแค่ไหนก็ถูกหลอกได้</strong> มันถูกฝึกมาให้ทำตามคำสั่งที่เห็นใน context และแยก "คำสั่งจริงของผู้ใช้" จาก "คำสั่งปลอมในข้อมูล" ไม่ได้ 100% · นี่คือคำตอบของคำถามที่หลายคนสงสัย — "โมเดลฉลาดขนาดนี้ ทำไมยังต้องมี sandbox กับ permission": เพราะเราออกแบบระบบไว้กัน<em>วันที่มันโดนหลอก</em> ไม่ใช่วันที่มันทำงานปกติ</li>
   </ul>
+  <figure class="fig">
+    <svg viewBox="0 0 720 272" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="เส้นทางของ prompt injection ในโลก agent: ข้อมูลที่คนนอกเขียนได้ เช่นเว็บ อีเมล และไฟล์ ไหลเข้า loop ทาง tool result ไปถึงโมเดลซึ่งอาจหลงเชื่อคำสั่งแฝง โดยมีกำแพงสองชั้นขวางทาง: ชั้นซอฟต์คือ system prompt กำกับว่าผล tool เป็น data ไม่ใช่คำสั่ง ช่วยลดโอกาสหลง และชั้นแข็งคือ sandbox กับ permission ที่จำกัดความเสียหายในวันที่โมเดลหลงเชื่อจริง">
+      <rect x="16" y="36" width="168" height="44" rx="8" fill="#fff" stroke="#b3402e" stroke-dasharray="5 4"/>
+      <text x="100" y="63" text-anchor="middle" class="lbl" font-size="12">🌐 เว็บที่ agent เปิด</text>
+      <rect x="16" y="92" width="168" height="44" rx="8" fill="#fff" stroke="#b3402e" stroke-dasharray="5 4"/>
+      <text x="100" y="119" text-anchor="middle" class="lbl" font-size="12">📧 อีเมล · issue ที่อ่าน</text>
+      <rect x="16" y="148" width="168" height="44" rx="8" fill="#fff" stroke="#b3402e" stroke-dasharray="5 4"/>
+      <text x="100" y="175" text-anchor="middle" class="lbl" font-size="12">📄 ไฟล์ที่คนอื่นเขียน</text>
+      <path d="M 188 58 C 202 58, 202 96, 210 104" class="flow-r" marker-end="url(#ar-r)"/>
+      <path d="M 188 114 H 206" class="flow-r" marker-end="url(#ar-r)"/>
+      <path d="M 188 170 C 202 170, 202 132, 210 124" class="flow-r" marker-end="url(#ar-r)"/>
+
+      <rect x="214" y="88" width="136" height="52" rx="9" fill="#f8ecd8" stroke="#c07415"/>
+      <text x="282" y="110" text-anchor="middle" class="lbl" font-size="12">tool result</text>
+      <text x="282" y="128" text-anchor="middle" class="sub">ไหลเข้า loop เอง</text>
+
+      <text x="378" y="30" text-anchor="middle" class="mono" fill="#0a5048">ชั้นซอฟต์</text>
+      <text x="378" y="46" text-anchor="middle" class="sub" fill="#0a5048">ผล tool = data ไม่ใช่คำสั่ง</text>
+      <line x1="378" y1="56" x2="378" y2="170" stroke="#0e6e63" stroke-width="1.6" stroke-dasharray="6 5"/>
+      <path d="M 354 114 H 400" class="flow" marker-end="url(#ar)"/>
+
+      <rect x="406" y="88" width="120" height="52" rx="9" fill="#26302f"/>
+      <text x="466" y="110" text-anchor="middle" class="lbl-w">โมเดลอ่าน</text>
+      <text x="466" y="128" text-anchor="middle" class="sub-w">อาจหลงเชื่อ</text>
+
+      <text x="560" y="30" text-anchor="middle" class="mono" fill="#0a5048">ชั้นแข็ง</text>
+      <text x="560" y="46" text-anchor="middle" class="sub" fill="#0a5048">sandbox · permission</text>
+      <line x1="560" y1="56" x2="560" y2="170" stroke="#0e6e63" stroke-width="3"/>
+      <path d="M 530 114 H 550" class="flow-r dash"/>
+
+      <rect x="592" y="88" width="112" height="52" rx="9" fill="#f6e3de" stroke="#b3402e" stroke-dasharray="5 4"/>
+      <text x="648" y="110" text-anchor="middle" class="lbl" font-size="12" fill="#b3402e">⚠ ความเสียหาย</text>
+      <text x="648" y="128" text-anchor="middle" class="sub">ข้อมูลรั่ว · ระบบพัง</text>
+
+      <text x="100" y="214" text-anchor="middle" class="sub" fill="#b3402e">คนนอกเขียนได้ =</text>
+      <text x="100" y="230" text-anchor="middle" class="sub" fill="#b3402e">ฝังคำสั่งแอบได้เสมอ</text>
+      <text x="378" y="214" text-anchor="middle" class="sub" fill="#0a5048">ลดโอกาสหลงเชื่อ</text>
+      <text x="378" y="230" text-anchor="middle" class="sub" fill="#0a5048">แต่ไม่ 100%</text>
+      <text x="560" y="214" text-anchor="middle" class="sub" fill="#0a5048">จำกัดความเสียหาย</text>
+      <text x="560" y="230" text-anchor="middle" class="sub" fill="#0a5048">วันที่หลงเชื่อจริง</text>
+      <text x="360" y="262" text-anchor="middle" class="sub">โมเดลฉลาดแค่ไหนก็ถูกหลอกได้ — ชั้นซอฟต์ลดโอกาส · ชั้นแข็งการันตีเพดานความเสียหาย</text>
+    </svg>
+    <figcaption><b>FIG 6.2</b> — เส้นทางของคำสั่งแฝง กับกำแพงสองชั้นที่ต้องมีคู่กัน · เส้นประสีแดงหยุดที่กำแพงแข็ง — นั่นคือทั้งเหตุผลของ sandbox และ permission</figcaption>
+  </figure>
+
   <div class="warn"><span class="t">สูตรหายนะ — ตัดวงจรอย่างน้อยหนึ่งขา</span>อันตรายสุดเมื่อสามอย่างนี้อยู่ครบใน agent ตัวเดียว: ① อ่านข้อมูลที่คนนอกเขียนได้ (เว็บ/อีเมล/issue) ② เข้าถึงข้อมูลลับ (ไฟล์, credentials) ③ ส่งอะไรออกสู่ภายนอกได้ (network, อีเมล) · ครบสามขา = คำสั่งแฝงหนึ่งประโยคขโมยข้อมูลออกไปได้จริง — harness ที่ดีตัดอย่างน้อยหนึ่งขาเสมอ เช่นตัด network ใน sandbox หรือกั้นให้การส่งออกทุกครั้งต้องผ่านคน · และคำสั่งแฝงที่หลุดเข้ามาค้างใน context ยังกลายเป็น context poisoning ลากงานที่เหลือให้เพี้ยนต่อ (บทที่ 8)</div>
 
   <div class="note"><span class="t">สรุปบทที่ 6</span>ตัดสินอิสระด้วยสองแกน: blast radius × reversibility — ยิ่งย้อนยากวงกว้าง อำนาจยิ่งต้องกลับไปหาคน · กลไก: permission tiers, allowlist จำคำตอบ, sandbox (เปลี่ยน "ไว้ใจไหม" เป็น "กรงแน่นไหม"), human-in-the-loop เฉพาะจุด · ถามทุกครั้ง = alarm fatigue อันตรายกว่าที่คิด · prompt injection คือศัตรูตัวจริง: tool result เป็น data ไม่ใช่ instruction + จำกัดความเสียหายด้วยระบบ เพราะโมเดลฉลาดแค่ไหนก็ถูกหลอกได้</div>
@@ -889,6 +999,48 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <li><strong>fan-out / verify</strong> — กระจายงานเดียวกันให้หลายลูกทำจากคนละมุม (ไล่หาบั๊กด้วย 5 มุมมอง) แล้วมีตัวตรวจ/รวมผล · ญาติทางความคิดกับ pass@k ที่จะเจอในบทที่ 11</li>
   </ul>
 
+  <figure class="fig">
+    <svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="สามรูปแบบ orchestration วางเทียบกัน: orchestrator-worker ตัวหลักแตกงานอิสระให้ลูกหลายตัวแล้วประกอบผล · pipeline ต่อแถวค้น ร่าง ตรวจ ผลของตัวหนึ่งเป็นวัตถุดิบตัวถัดไป · fan-out verify ยิงงานเดียวหลายมุมพร้อมกันแล้วมีตัวตรวจคัดของดี">
+      <text x="126" y="26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="1" fill="#54625f">ORCHESTRATOR–WORKER</text>
+      <rect x="96" y="36" width="60" height="28" rx="7" fill="#0e6e63"/>
+      <text x="126" y="55" text-anchor="middle" class="lbl-w" font-size="11">หลัก</text>
+      <path d="M 110 64 C 100 78, 72 90, 58 96" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 126 64 V 96" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 142 64 C 152 78, 180 90, 194 96" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="24" y="100" width="56" height="26" rx="7" fill="#fff" stroke="#54625f"/><text x="52" y="118" text-anchor="middle" class="lbl" font-size="11">ลูก A</text>
+      <rect x="92" y="100" width="56" height="26" rx="7" fill="#fff" stroke="#54625f"/><text x="120" y="118" text-anchor="middle" class="lbl" font-size="11">ลูก B</text>
+      <rect x="160" y="100" width="56" height="26" rx="7" fill="#fff" stroke="#54625f"/><text x="188" y="118" text-anchor="middle" class="lbl" font-size="11">ลูก C</text>
+      <text x="126" y="158" text-anchor="middle" class="sub">งานอิสระหลายชิ้นพร้อมกัน</text>
+      <text x="126" y="176" text-anchor="middle" class="sub">หลักถือแผน + ประกอบผล</text>
+
+      <line x1="240" y1="14" x2="240" y2="186" stroke="#ddd5c6"/>
+      <text x="360" y="26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="1" fill="#54625f">PIPELINE</text>
+      <rect x="256" y="62" width="60" height="30" rx="7" fill="#e2eeea" stroke="#0e6e63"/><text x="286" y="82" text-anchor="middle" class="lbl" font-size="11">ค้น</text>
+      <path d="M 316 77 H 326" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="330" y="62" width="60" height="30" rx="7" fill="#e2eeea" stroke="#0e6e63"/><text x="360" y="82" text-anchor="middle" class="lbl" font-size="11">ร่าง</text>
+      <path d="M 390 77 H 400" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="404" y="62" width="60" height="30" rx="7" fill="#e2eeea" stroke="#0e6e63"/><text x="434" y="82" text-anchor="middle" class="lbl" font-size="11">ตรวจ</text>
+      <text x="360" y="158" text-anchor="middle" class="sub">ผลของตัวหนึ่ง = วัตถุดิบตัวถัดไป</text>
+      <text x="360" y="176" text-anchor="middle" class="sub">แต่ละขั้นได้ context สะอาด</text>
+
+      <line x1="474" y1="14" x2="474" y2="186" stroke="#ddd5c6"/>
+      <text x="594" y="26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="1" fill="#54625f">FAN-OUT / VERIFY</text>
+      <rect x="492" y="40" width="56" height="26" rx="7" fill="#fff" stroke="#54625f"/><text x="520" y="58" text-anchor="middle" class="lbl" font-size="11">มุม 1</text>
+      <rect x="556" y="40" width="56" height="26" rx="7" fill="#fff" stroke="#54625f"/><text x="584" y="58" text-anchor="middle" class="lbl" font-size="11">มุม 2</text>
+      <rect x="620" y="40" width="56" height="26" rx="7" fill="#fff" stroke="#54625f"/><text x="648" y="58" text-anchor="middle" class="lbl" font-size="11">มุม 3</text>
+      <path d="M 520 66 C 528 82, 546 94, 560 100" class="flow" marker-end="url(#ar)"/>
+      <path d="M 584 66 V 100" class="flow" marker-end="url(#ar)"/>
+      <path d="M 648 66 C 640 82, 622 94, 608 100" class="flow" marker-end="url(#ar)"/>
+      <rect x="550" y="104" width="88" height="30" rx="7" fill="#f8ecd8" stroke="#c07415"/>
+      <text x="594" y="124" text-anchor="middle" class="lbl" font-size="11">ตรวจ / รวม</text>
+      <text x="594" y="158" text-anchor="middle" class="sub">งานเดียว ยิงหลายมุมพร้อมกัน</text>
+      <text x="594" y="176" text-anchor="middle" class="sub">ตัวตรวจคัดของดี (ญาติ pass@k)</text>
+
+      <text x="360" y="214" text-anchor="middle" class="sub">กติการ่วมของทุกแบบ: brief ครบในตัว · ผลกลับเป็นสรุปสั้น</text>
+    </svg>
+    <figcaption><b>FIG 10.2</b> — สามท่ามาตรฐานของการแตกงาน · เลือกตามรูปงาน: อิสระหลายชิ้น → orchestrator, งานเป็นขั้น → pipeline, งานเดียวอยากได้หลายมุม → fan-out</figcaption>
+  </figure>
+
   <h3>10.3 การส่งงาน = เขียน prompt ให้คนที่ไม่เห็นบทสนทนาเรา</h3>
   <p>กับดักอันดับหนึ่งของมือใหม่: สั่งลูกว่า "แก้ไฟล์ที่คุยกันเมื่อกี้" — ลูก<strong>เกิดมาพร้อมโต๊ะเปล่า</strong> ไม่เห็นบทสนทนาของเรา ไม่รู้ว่า "เมื่อกี้" คืออะไร · brief ที่ดีจึงต้องครบในตัว: <strong>เป้าหมาย + บริบทที่จำเป็น (path, ข้อจำกัด) + นิยามว่าเสร็จคืออะไร + รูปแบบคำตอบที่ต้องการ</strong> — ทักษะเดียวกับการมอบงานให้ junior ที่เพิ่งเข้าทีมวันแรก และเป็นทักษะ prompt จากเล่ม #07 กลับมาในสเกลใหม่</p>
 
@@ -948,6 +1100,32 @@ footer a:hover{color:var(--red);border-color:var(--red)}
       <path d="M 522 272 C 668 264, 692 152, 666 108" class="flow-r dash" marker-end="url(#ar-r)"/>
     </svg>
     <figcaption><b>FIG 11.1</b> — วงจรปรับ harness อย่างมีหลักฐาน: เปลี่ยนทีละอย่าง → รันชุดเดิม → เทียบตัวเลข → ตัดสินใจ · suite โตขึ้นเรื่อย ๆ จากแผลจริง</figcaption>
+  </figure>
+
+  <p>ขยายเรื่อง pass@k อีกนิดให้เห็นภาพ — เพราะนี่คือจุดที่คนพลาดบ่อยที่สุด: ทำไม "รันครั้งเดียวแล้วเทียบ" ถึงหลอกเราได้ทั้งที่ตั้งใจวัดแล้ว</p>
+  <figure class="fig">
+    <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="งานเดียวกันรันห้ารอบ: harness เวอร์ชันหนึ่งผ่านสองในห้า เวอร์ชันสองผ่านสี่ในห้า แต่ถ้าบังเอิญเทียบกันแค่รอบแรกซึ่งเวอร์ชันหนึ่งผ่านและเวอร์ชันสองไม่ผ่าน จะสรุปกลับด้านจากความจริง เพราะ agent ไม่ deterministic การเทียบต้องเทียบสัดส่วนผ่านจากหลายรอบ">
+      <text x="257" y="24" text-anchor="middle" class="mono">งานเดียวกัน · รัน 5 รอบ</text>
+      <text x="24" y="62" class="mono">harness v1</text>
+      <rect x="140" y="40" width="34" height="34" rx="6" fill="#e2eeea" stroke="#0e6e63"/><text x="157" y="63" text-anchor="middle" font-size="15" font-weight="600" fill="#0a5048">✓</text>
+      <rect x="190" y="40" width="34" height="34" rx="6" fill="#f6e3de" stroke="#b3402e"/><text x="207" y="63" text-anchor="middle" font-size="15" font-weight="600" fill="#b3402e">✗</text>
+      <rect x="240" y="40" width="34" height="34" rx="6" fill="#f6e3de" stroke="#b3402e"/><text x="257" y="63" text-anchor="middle" font-size="15" font-weight="600" fill="#b3402e">✗</text>
+      <rect x="290" y="40" width="34" height="34" rx="6" fill="#e2eeea" stroke="#0e6e63"/><text x="307" y="63" text-anchor="middle" font-size="15" font-weight="600" fill="#0a5048">✓</text>
+      <rect x="340" y="40" width="34" height="34" rx="6" fill="#f6e3de" stroke="#b3402e"/><text x="357" y="63" text-anchor="middle" font-size="15" font-weight="600" fill="#b3402e">✗</text>
+      <text x="400" y="62" class="lbl">ผ่าน 2/5</text>
+      <text x="24" y="118" class="mono">harness v2</text>
+      <rect x="140" y="96" width="34" height="34" rx="6" fill="#f6e3de" stroke="#b3402e"/><text x="157" y="119" text-anchor="middle" font-size="15" font-weight="600" fill="#b3402e">✗</text>
+      <rect x="190" y="96" width="34" height="34" rx="6" fill="#e2eeea" stroke="#0e6e63"/><text x="207" y="119" text-anchor="middle" font-size="15" font-weight="600" fill="#0a5048">✓</text>
+      <rect x="240" y="96" width="34" height="34" rx="6" fill="#e2eeea" stroke="#0e6e63"/><text x="257" y="119" text-anchor="middle" font-size="15" font-weight="600" fill="#0a5048">✓</text>
+      <rect x="290" y="96" width="34" height="34" rx="6" fill="#e2eeea" stroke="#0e6e63"/><text x="307" y="119" text-anchor="middle" font-size="15" font-weight="600" fill="#0a5048">✓</text>
+      <rect x="340" y="96" width="34" height="34" rx="6" fill="#e2eeea" stroke="#0e6e63"/><text x="357" y="119" text-anchor="middle" font-size="15" font-weight="600" fill="#0a5048">✓</text>
+      <text x="400" y="118" class="lbl" fill="#0a5048">ผ่าน 4/5 — ดีกว่าจริง</text>
+      <rect x="134" y="32" width="46" height="106" rx="8" fill="none" stroke="#b3402e" stroke-width="1.6" stroke-dasharray="6 5"/>
+      <text x="24" y="172" class="sub" fill="#b3402e">⚠ ถ้าจับฉลากเทียบแค่รอบเดียว (กรอบประ): v1 ชนะ — สรุปกลับด้านจากความจริง</text>
+      <text x="24" y="204" class="sub">agent ไม่ deterministic — งานเดิมรันซ้ำได้ผลไม่ซ้ำ</text>
+      <text x="24" y="222" class="sub">เทียบสองเวอร์ชัน = เทียบสัดส่วนผ่านจากหลายรอบ (pass@k) ไม่ใช่ครั้งเดียวชนกัน</text>
+    </svg>
+    <figcaption><b>FIG 11.2</b> — เหตุผลที่ต้อง pass@k: ความสุ่มทำให้รอบเดียวโกหกได้สนิทใจ · ตัวเลขที่เชื่อได้คือสัดส่วน ไม่ใช่เหตุการณ์เดียว</figcaption>
   </figure>
 
   <h3>11.3 ของแถมที่แพงที่สุดของการมี eval</h3>
@@ -1048,6 +1226,33 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <li><strong>④ เติม memory / subagents เมื่อเจ็บจริง</strong> — อย่าใส่วันแรก · ยังไม่เจอปัญหา context ยาว ก็ยังไม่ต้องมียาแก้ (บทที่ 9–10 รอได้เสมอ)</li>
   </ul>
 
+  <figure class="fig">
+    <svg viewBox="0 0 720 204" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ลำดับการคิดสี่ขั้นก่อนเขียนโค้ด: หนึ่ง verifier ก่อน ถ้าตอบไม่ได้ว่างานรู้ได้ยังไงว่าถูกก็ยังไม่ต้องไปต่อ · สอง เลือก tools น้อยสุดที่พองาน · สาม วาง guardrails ตามความเสี่ยงจริง · สี่ ค่อยขยายด้วย memory และ subagents เมื่อเจ็บจริงเท่านั้น">
+      <text x="104" y="40" text-anchor="middle" class="sub" fill="#b3402e">ตอบข้อ ① ไม่ได้ = ยังไม่ต้องไปต่อ</text>
+      <rect x="28" y="56" width="152" height="88" rx="10" fill="#0e6e63"/>
+      <text x="104" y="84" text-anchor="middle" class="lbl-w" font-size="12">① verifier ก่อน</text>
+      <text x="104" y="106" text-anchor="middle" class="sub-w">รู้ได้ยังไงว่างานถูก?</text>
+      <text x="104" y="124" text-anchor="middle" class="sub-w">(บท 5)</text>
+      <path d="M 182 100 H 200" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="204" y="56" width="152" height="88" rx="10" fill="#fff" stroke="#0e6e63" stroke-width="1.4"/>
+      <text x="280" y="84" text-anchor="middle" class="lbl" font-size="12">② tools น้อยสุด</text>
+      <text x="280" y="106" text-anchor="middle" class="sub">2–5 ตัวที่พองาน</text>
+      <text x="280" y="124" text-anchor="middle" class="sub">(บท 4)</text>
+      <path d="M 358 100 H 376" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="380" y="56" width="152" height="88" rx="10" fill="#fff" stroke="#c07415" stroke-width="1.4"/>
+      <text x="456" y="84" text-anchor="middle" class="lbl" font-size="12">③ guardrails</text>
+      <text x="456" y="106" text-anchor="middle" class="sub">ตามความเสี่ยงจริง</text>
+      <text x="456" y="124" text-anchor="middle" class="sub">(บท 6)</text>
+      <path d="M 534 100 H 552" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="556" y="56" width="146" height="88" rx="10" fill="#fff" stroke="#54625f" stroke-dasharray="6 5"/>
+      <text x="629" y="84" text-anchor="middle" class="lbl" font-size="12">④ ค่อยขยาย</text>
+      <text x="629" y="106" text-anchor="middle" class="sub">memory · subagents</text>
+      <text x="629" y="124" text-anchor="middle" class="sub">เมื่อเจ็บจริง (บท 9–10)</text>
+      <text x="360" y="186" text-anchor="middle" class="sub">นี่คือลำดับการคิด — ไม่ใช่ลำดับเขียนโค้ด · ข้อ ④ อาจไม่มาถึงเลยก็ได้ และนั่นแปลว่าออกแบบถูก</text>
+    </svg>
+    <figcaption><b>FIG 13.1</b> — สี่ขั้นก่อนโค้ดบรรทัดแรก: เริ่มจากคำถามที่ตอบยากสุด (verifier) แล้วค่อยไล่ไปหาของที่เติมทีหลังได้</figcaption>
+  </figure>
+
   <h3>13.2 minimal harness — แก่นมันเล็กแค่นี้</h3>
   <p>โค้ดข้างล่างคือ harness ที่ทำงานได้จริงทั้งตัว ไม่ถึง 40 บรรทัด — loop จากบทที่ 2 + เครื่องมือไม่กี่ตัว + verifier หนึ่งตัว + การ์ดจากบทที่ 6 และ 8 · สังเกตว่าทุกบรรทัดคือบทหนึ่งของเล่มนี้:</p>
   <div class="prompt-label" style="color:var(--ink-soft)">▸ pseudocode: minimal harness ทั้งระบบ</div>
@@ -1118,6 +1323,23 @@ def agent(task, <span class="ph">max_turns=30</span>):            <span class="c
   <p><strong>ฝั่ง "harness จะอยู่"</strong> ถามกลับด้วยภาพง่าย ๆ: ต่อให้จ้างวิศวกรที่เก่งที่สุดในโลก เขาก็ยังต้องมี IDE, สิทธิ์เข้าระบบ, code review และการวัดผลงาน — ไม่ใช่เพราะเขาโง่ แต่เพราะ<strong>นั่นคือ interface ระหว่างความสามารถกับโลกจริง</strong> · tools, permissions, evals, observability ไม่ได้มีไว้ชดเชยความโง่ของโมเดล — มันคือการเชื่อมพลังเข้ากับความรับผิดชอบ ซึ่งไม่มีวันตกยุคเพราะโมเดลฉลาดขึ้น</p>
   <p>คำตอบที่น่าจะใกล้จริง: <strong>harness จะบางลงในชั้น "ช่วยคิด" แต่อยู่ยาวในชั้น "ต่อกับโลก"</strong> — prompt trick จะตายไปเรื่อย ๆ ตาม bitter lesson แต่ verifier, guardrails, การวัดผล จะยิ่งสำคัญขึ้นเมื่อ agent รับงานใหญ่ขึ้นและอิสระมากขึ้น · สังเกตว่าเสาหลักของเล่มนี้ตั้งใจอยู่ฝั่งหลังเกือบทั้งหมด</p>
 
+  <figure class="fig">
+    <svg viewBox="0 0 720 258" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="harness สองชั้นบนแกนเวลา: ชั้นช่วยโมเดลคิด เช่น prompt trick การป้อนแผน และ scaffold ค่อย ๆ บางลงเมื่อโมเดลเก่งขึ้นตาม bitter lesson ส่วนชั้นต่อกับโลกจริง คือ tools guardrails verifier evals และ observability หนาคงที่และยิ่งสำคัญเมื่อ agent อิสระขึ้น">
+      <polygon points="60,36 660,84 660,98 60,132" fill="#f8ecd8" stroke="#c07415" stroke-width="1.4"/>
+      <text x="80" y="72" class="lbl" fill="#c07415">ชั้นช่วยโมเดลคิด</text>
+      <text x="80" y="92" class="sub">prompt trick · ป้อนแผนคิด · scaffold</text>
+      <text x="480" y="58" text-anchor="middle" class="sub" fill="#c07415">บางลงเรื่อย ๆ — โดนโมเดลกลืน (bitter lesson)</text>
+      <rect x="60" y="152" width="600" height="52" rx="8" fill="#e2eeea" stroke="#0e6e63" stroke-width="1.4"/>
+      <text x="80" y="174" class="lbl" fill="#0a5048">ชั้นต่อกับโลกจริง</text>
+      <text x="80" y="192" class="sub">tools · guardrails · verifier · evals · observability</text>
+      <text x="648" y="174" text-anchor="end" class="sub" fill="#0a5048">อยู่ยาว — ยิ่ง agent อิสระ</text>
+      <text x="648" y="192" text-anchor="end" class="sub" fill="#0a5048">ยิ่งสำคัญ</text>
+      <path d="M 60 222 H 690" class="flow" marker-end="url(#ar)"/>
+      <text x="375" y="246" text-anchor="middle" class="sub">เวลา — โมเดลเก่งขึ้นเรื่อย ๆ →</text>
+    </svg>
+    <figcaption><b>FIG 14.1</b> — คำตอบของ bitter lesson ที่น่าจะใกล้จริง: ชั้น "ช่วยคิด" ถูกกลืน แต่ชั้น "ต่อกับโลก" ไม่ใช่ไม้ค้ำความโง่ — มันคือ interface กับความรับผิดชอบ</figcaption>
+  </figure>
+
   <h3>14.2 ทิศทางที่มองเห็นแล้ว</h3>
   <ul>
     <li><strong>มาตรฐานเปิดชนะ</strong> — MCP ทำให้ tools เป็นของกลางข้าม harness · แนวโน้มเดียวกันกำลังไล่มาตรฐานส่วนอื่น ๆ ของ harness ตามมา</li>
@@ -1153,7 +1375,7 @@ def agent(task, <span class="ph">max_turns=30</span>):            <span class="c
       <path d="M 440 116 C 458 102, 466 96, 476 88" class="flow-a" marker-end="url(#ar-a)"/>
       <text x="360" y="288" text-anchor="middle" class="sub">บันไดสายทักษะ AI ของ collection — เล่มนี้คือขั้นปิด</text>
     </svg>
-    <figcaption><b>FIG 14.1</b> — สามขั้นของการเดินทาง: ใช้เป็น → สั่งเป็น → ออกแบบระบบเป็น · ai-brain (#04) คือแอปพลิเคชันที่แวะสร้างข้างทาง ไม่ใช่ขั้นทักษะ</figcaption>
+    <figcaption><b>FIG 14.2</b> — สามขั้นของการเดินทาง: ใช้เป็น → สั่งเป็น → ออกแบบระบบเป็น · ai-brain (#04) คือแอปพลิเคชันที่แวะสร้างข้างทาง ไม่ใช่ขั้นทักษะ</figcaption>
   </figure>
 
   <p>ถ้ามองย้อนทั้งสาย จะเห็นว่าแต่ละขั้นตอบคำถามคนละชั้น: <strong>#06</strong> — พูดกับ AI ยังไงให้ได้งาน · <strong>#07</strong> — บังคับผลลัพธ์ยังไงให้เป๊ะพอเอาไปต่อระบบ · <strong>#08</strong> — ออกแบบระบบยังไงให้ AI ทำงานเองได้โดยเราไว้ใจได้ · และที่ซ่อนอยู่ในทุกขั้น: ยิ่งให้อิสระมาก ยิ่งต้องออกแบบสิ่งรอบตัวมันดี</p>
