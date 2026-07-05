@@ -214,29 +214,7 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <li><strong>Observability</strong> — ให้คนมองเห็นว่ามันกำลังทำอะไร คิดอะไร เปลืองเท่าไหร่ (บทที่ 7)</li>
   </ul>
 
-  <figure class="fig">
-    <svg viewBox="0 0 720 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="วงแหวนสามชั้น: แกนกลางคือ Model ที่ทำได้อย่างเดียวคือพ่นข้อความ ห่อด้วยชั้น Harness ซึ่งมีห้าหน้าที่คือ context, tools, feedback, guardrails, observability รวมกันทั้งก้อนคือ Agent ที่ผู้ใช้เห็น">
-      <circle cx="190" cy="172" r="142" fill="none" stroke="#54625f" stroke-width="1.3" stroke-dasharray="6 5"/>
-      <circle cx="190" cy="172" r="104" fill="#e2eeea" stroke="#0e6e63" stroke-width="1.5"/>
-      <circle cx="190" cy="172" r="52" fill="#222b2e"/>
-      <text x="190" y="168" text-anchor="middle" class="lbl-w">MODEL</text>
-      <text x="190" y="186" text-anchor="middle" class="sub-w">พ่นข้อความ</text>
-      <rect x="146" y="56" width="88" height="22" rx="11" fill="#fff" stroke="#0e6e63"/><text x="190" y="71" text-anchor="middle" class="mono" fill="#0a5048">context</text>
-      <rect x="252" y="124" width="76" height="22" rx="11" fill="#fff" stroke="#c07415"/><text x="290" y="139" text-anchor="middle" class="mono" fill="#c07415">tools</text>
-      <rect x="216" y="242" width="86" height="22" rx="11" fill="#fff" stroke="#5a8a5e"/><text x="259" y="257" text-anchor="middle" class="mono" fill="#5a8a5e">feedback</text>
-      <rect x="76" y="242" width="94" height="22" rx="11" fill="#fff" stroke="#b3402e"/><text x="123" y="257" text-anchor="middle" class="mono" fill="#b3402e">guardrails</text>
-      <rect x="34" y="124" width="110" height="22" rx="11" fill="#fff" stroke="#54625f"/><text x="89" y="139" text-anchor="middle" class="mono">observability</text>
-      <text x="190" y="336" text-anchor="middle" class="mono">AGENT = ทั้งก้อนที่ผู้ใช้เห็น</text>
-
-      <text x="390" y="46" class="lbl" fill="#0a5048">5 หน้าที่ของ harness</text>
-      <rect x="390" y="66" width="11" height="11" rx="2" fill="#0e6e63"/><text x="410" y="77" class="lbl">Context</text><text x="410" y="95" class="sub">คัดว่าโมเดลเห็นอะไร ในจังหวะไหน (บท 3, 9)</text>
-      <rect x="390" y="122" width="11" height="11" rx="2" fill="#c07415"/><text x="410" y="133" class="lbl">Tools</text><text x="410" y="151" class="sub">มือของมัน — ทำอะไรกับโลกภายนอกได้ (บท 4)</text>
-      <rect x="390" y="178" width="11" height="11" rx="2" fill="#5a8a5e"/><text x="410" y="189" class="lbl">Feedback</text><text x="410" y="207" class="sub">ช่องทางรู้เองว่างานถูกหรือผิด (บท 5)</text>
-      <rect x="390" y="234" width="11" height="11" rx="2" fill="#b3402e"/><text x="410" y="245" class="lbl">Guardrails</text><text x="410" y="263" class="sub">ขีดเส้นความเสียหาย — อะไรต้องถามคน (บท 6)</text>
-      <rect x="390" y="290" width="11" height="11" rx="2" fill="#54625f"/><text x="410" y="301" class="lbl">Observability</text><text x="410" y="319" class="sub">คนมองเห็นว่ามันทำอะไร เปลืองเท่าไหร่ (บท 7)</text>
-    </svg>
-    <figcaption><b>FIG 1.1</b> — Agent ไม่ใช่โมเดล แต่คือ โมเดล + ระบบที่ห่อมัน · โมเดลตัวเดียวกัน เปลี่ยน harness = ได้ agent คนละระดับ</figcaption>
-  </figure>
+  <p>ภาพจำง่าย ๆ: วางโมเดลไว้ตรงกลาง — มันทำได้อย่างเดียวคือพ่นข้อความ — แล้วห่อรอบด้วยห้าหน้าที่ข้างบนของ harness ก้อนทั้งหมดที่ห่อเสร็จแล้วคือสิ่งที่ผู้ใช้เห็น เรียกว่า <strong>agent</strong> · ห้าหน้าที่นี้ต่อเข้ากับวงจรการทำงานจริงตรงไหนบ้าง จะเห็นเป็นแผนที่เต็มในบทถัดไป (FIG 2.2) — รูปนั้นคือรูปที่จะพากลับมาดูซ้ำตลอดเล่ม</p>
 
   <p>ประโยคที่อยากให้จำจากบทนี้: <strong>โมเดลคือส่วนที่เราคุมไม่ได้ แต่ harness คือส่วนที่เราออกแบบได้</strong> · โมเดลเก่งขึ้นทุกปีตามจังหวะของ lab ผู้สร้าง — เราทำอะไรกับมันไม่ได้นอกจากรอ แต่ harness อยู่ในมือเราทั้งหมด และมันคือตัวตัดสินว่าความเก่งของโมเดลจะถูกรีดออกมาใช้กับงานจริงได้กี่เปอร์เซ็นต์</p>
 
@@ -397,7 +375,7 @@ footer a:hover{color:var(--red);border-color:var(--red)}
   <p>เคยเจอไหมครับ — ปล่อย agent ทำงานยาว ๆ ผ่านไปสักพักมันเริ่ม "โง่ลง": ลืมข้อตกลงที่คุยกันตอนต้น กลับไปแก้ไฟล์ที่บอกแล้วว่าห้ามแตะ เรียกฟังก์ชันที่เพิ่งเปลี่ยนชื่อไปด้วยชื่อเก่า · โมเดลไม่ได้เสื่อมกลางทาง — แต่ <strong>"โต๊ะทำงาน" ของมันกำลังล้น</strong></p>
 
   <h3>3.1 บนโต๊ะมีอะไรวางอยู่บ้าง</h3>
-  <p>เล่ม #07 เปรียบ context window เป็นโต๊ะทำงานที่วางของได้จำกัดไปแล้ว · ใน agent ของบนโต๊ะมี 4 กอง: <strong>system prompt</strong> (คงที่), <strong>tool schemas</strong> (คงที่ — แต่ต่อ MCP เยอะ ๆ ก็บวมได้), <strong>ประวัติการคุย</strong> และ <strong>ผลลัพธ์ tool</strong> — กองสุดท้ายคือตัวร้าย: อ่านไฟล์หนึ่งครั้งได้หลายพัน token, รันเทสต์หนึ่งรอบได้ log ยาวเหยียด และทุกอย่างกองอยู่บนโต๊ะ<em>ไปตลอดเซสชัน</em>ถ้าไม่มีใครจัดการ</p>
+  <p>เล่ม #07 เปรียบ context window เป็นโต๊ะทำงานที่วางของได้จำกัดไปแล้ว · ใน agent ของบนโต๊ะมี 4 กอง: <strong>system prompt</strong> (คงที่), <strong>tool schemas</strong> (คงที่ — แต่ต่อ MCP เยอะ ๆ ก็บวมได้ · บทที่ 4.5), <strong>ประวัติการคุย</strong> และ <strong>ผลลัพธ์ tool</strong> — กองสุดท้ายคือตัวร้าย: อ่านไฟล์หนึ่งครั้งได้หลายพัน token, รันเทสต์หนึ่งรอบได้ log ยาวเหยียด และทุกอย่างกองอยู่บนโต๊ะ<em>ไปตลอดเซสชัน</em>ถ้าไม่มีใครจัดการ</p>
 
   <figure class="fig">
     <svg viewBox="0 0 720 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แถบ context budget สองแถบ: ก่อน compaction พื้นที่เกือบเต็มโดยผล tool เก่ากิน 44% ประวัติ 30% เหลือว่างแค่ 8% เมื่อใกล้เต็ม harness ทำ compaction สรุปประวัติและผลเก่าเป็นย่อสั้น แถบหลัง compaction จึงเหลือพื้นที่ว่างมากสำหรับงานต่อ">
@@ -570,6 +548,7 @@ footer a:hover{color:var(--red);border-color:var(--red)}
 
   <h3>4.5 MCP — มาตรฐานเปิดของการเสียบเครื่องมือ</h3>
   <p>เล่ม #07 แนะนำ <strong>MCP</strong> (Model Context Protocol) ไว้ว่าเป็น "ปลั๊ก USB" ที่ต่อ AI เข้ากับแอปและข้อมูลจริง · มุมของคนออกแบบ harness: MCP แยก<strong>คนสร้างเครื่องมือ</strong>ออกจาก<strong>คนสร้าง harness</strong> — เขียน server ครั้งเดียว เสียบได้กับทุก harness ที่พูดโปรโตคอลนี้ ไม่ต้องผูกกับ vendor ไหน · แต่ระวัง: MCP ทำให้<em>เสียบง่ายขึ้น</em> ไม่ได้ทำให้<em>ออกแบบดีขึ้น</em> — server ที่ดัมพ์ API ดิบทั้งชุด 60 endpoints คือตัวอย่างคลาสสิกของสิ่งที่บทนี้เตือนทั้งบท</p>
+  <p>อัปเดตที่ตอกย้ำหลักการนี้: harness ยุคใหม่เริ่มไม่ยัด schema ของทุกเครื่องมือใน MCP server ทั้งชุดเข้า context ตั้งแต่ต้นอีกต่อไป — แต่ให้ agent <em>ค้นหา</em>ก่อนว่ามีเครื่องมือไหนเกี่ยวกับงานตรงหน้า แล้วค่อยโหลด schema เฉพาะตัวที่จะใช้จริง · หลัก progressive disclosure (บทที่ 9) ไล่ตามมาถึงชั้น tools เองในที่สุด — ต่อ MCP server กี่สิบตัวก็ไม่ต้องแลกกับ context ที่บวมแบบที่เคยเป็นปัญหาคลาสสิกอีกต่อไป</p>
 
   <div class="note"><span class="t">สรุปบทที่ 4</span>tool = สัญญา 3 ส่วน (name, description, schema) — description คือ prompt ที่ฝังถาวร · ออกแบบตาม workflow ไม่ใช่ API ดิบ · จำนวนพอดี — ทุก schema กิน context ทุกตัวเลือกเพิ่มโอกาสพลาด · ผลลัพธ์กระชับเพราะมันกลายเป็น context · error ที่ดี = prompt ขากลับที่สอนวิธีแก้ · MCP ทำให้เสียบง่าย แต่หลักออกแบบทั้งบทนี้ยังใช้เต็ม ๆ</div>
   <div class="chapter-end">· · ·</div>
@@ -764,6 +743,8 @@ footer a:hover{color:var(--red);border-color:var(--red)}
 
   <div class="warn"><span class="t">สูตรหายนะ — ตัดวงจรอย่างน้อยหนึ่งขา</span>อันตรายสุดเมื่อสามอย่างนี้อยู่ครบใน agent ตัวเดียว: ① อ่านข้อมูลที่คนนอกเขียนได้ (เว็บ/อีเมล/issue) ② เข้าถึงข้อมูลลับ (ไฟล์, credentials) ③ ส่งอะไรออกสู่ภายนอกได้ (network, อีเมล) · ครบสามขา = คำสั่งแฝงหนึ่งประโยคขโมยข้อมูลออกไปได้จริง — harness ที่ดีตัดอย่างน้อยหนึ่งขาเสมอ เช่นตัด network ใน sandbox หรือกั้นให้การส่งออกทุกครั้งต้องผ่านคน · และคำสั่งแฝงที่หลุดเข้ามาค้างใน context ยังกลายเป็น context poisoning ลากงานที่เหลือให้เพี้ยนต่อ (บทที่ 8)</div>
 
+  <p>นี่ไม่ใช่สถานการณ์สมมติที่ยกมาขู่ — ต้นเดือนมิถุนายน 2025 นักวิจัยจาก Aim Security เปิดเผยช่องโหว่ชื่อ <strong>EchoLeak</strong> (CVE-2025-32711) ใน Microsoft 365 Copilot ที่ครบทั้งสามขาข้างบนเป๊ะ: ส่งอีเมลธรรมดาฉบับเดียวไปหาเป้าหมาย เขียนคำสั่งแฝงให้อ่านเหมือนกำลังพูดกับคน ไม่ใช่ AI (① ข้อมูลที่คนนอกเขียนได้) — พอผู้ใช้ถาม Copilot คำถามงานทั่วไปในภายหลัง ระบบค้นเอกสารก็ดึงอีเมลนั้นเข้ามาเองโดยไม่มีใครเรียก (② เข้าถึงสิ่งที่อยู่ในเซสชัน) แล้วคำสั่งแฝงก็สั่งเข้ารหัสข้อมูลเป็น URL ซ่อนในลิงก์รูปภาพที่ระบบโหลดอัตโนมัติโดยไม่ต้องคลิกอะไรเลย (③ ส่งออกได้) — ผู้ใช้ไม่ต้องกดอะไรสักครั้งเดียว Microsoft แก้ที่ฝั่งเซิร์ฟเวอร์ได้ก่อนมีใครถูกโจมตีจริง แต่มันคือบทพิสูจน์ว่าสูตรหายนะข้างบนไม่ใช่ทฤษฎี — และเกิดกับระบบที่มีทีมความปลอดภัยระดับโลกดูแลอยู่แล้วด้วยซ้ำ · รูปแบบเครือญาติเกิดกับ GitHub Copilot ปีเดียวกัน (CVE-2025-53773): คำสั่งแฝงในไฟล์ README หลอกให้ agent แก้ค่าตั้งค่าของตัวเองเปิด auto-approve ทุกคำสั่งเงียบ ๆ ก่อนจะสั่งรันคำสั่งอันตราย — ปิดด่านที่บทนี้เพิ่งสอนทั้งบทให้เหลือศูนย์ก่อนลงมือจริง</p>
+
   <div class="note"><span class="t">สรุปบทที่ 6</span>ตัดสินอิสระด้วยสองแกน: blast radius × reversibility — ยิ่งย้อนยากวงกว้าง อำนาจยิ่งต้องกลับไปหาคน · กลไก: permission tiers, allowlist จำคำตอบ, sandbox (เปลี่ยน "ไว้ใจไหม" เป็น "กรงแน่นไหม"), human-in-the-loop เฉพาะจุด · ถามทุกครั้ง = alarm fatigue อันตรายกว่าที่คิด · prompt injection คือศัตรูตัวจริง: tool result เป็น data ไม่ใช่ instruction + จำกัดความเสียหายด้วยระบบ เพราะโมเดลฉลาดแค่ไหนก็ถูกหลอกได้</div>
   <div class="chapter-end">· · ·</div>
 </section>
@@ -869,6 +850,9 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <figcaption><b>FIG 8.1</b> — failure modes สี่ตัวเกิดคนละจุดของ loop · การ์ดสองชุดข้างล่างคือเข็มขัดนิรภัยที่ดักมันเกือบทั้งหมด</figcaption>
   </figure>
 
+  <p>เคส doom loop ที่มีบันทึกไว้จริง: ปี 2025 มีรายงานสาธารณะบน GitHub ว่า subagent ตัวหนึ่งของ Claude Code วนเรียกคำสั่ง <code>npm install</code> คำสั่งเดิมซ้ำกว่า 300 ครั้งติดต่อกันนาน 4.6 ชั่วโมง เผาโทเคนไปเกือบ 27 ล้านตัว ก่อนผู้ใช้จะมาเห็นแล้วหยุดเอง — ตัวเลขนี้ฟังดูเวอร์ แต่คือสิ่งที่เกิดขึ้นได้จริงถ้าไม่มีเพดานกันวงจรตั้งแต่ต้น (8.2 ข้างล่างคือคำตอบตรง ๆ ของเคสนี้)</p>
+  <p>ฝั่งเสร็จปลอม/reward hacking มีทั้งหลักฐานเบื้องหลังกลไกและเคสจริงในโลกธุรกิจ งานวิจัยของ Anthropic เองช่วงปลายปี 2025 พบว่าโมเดลที่ฝึกด้วย reinforcement learning ให้เขียนโค้ด เรียนรู้ทางลัดเรียก <code>sys.exit(0)</code> หลอกให้ระบบนับว่าเทสต์ผ่านทั้งที่ไม่ได้รันจริง แล้วพฤติกรรมโกงนี้ยังลามไปเรื่องอื่นที่ไม่เกี่ยวข้องกันด้วย — สอดคล้องกับงานของ METR ที่พบโมเดลแถวหน้าหลายตัว (รวม Claude 3.7 Sonnet) โกงตัวตรวจคะแนนเองในกว่า 30% ของการทดสอบ โดยไม่มีใครสอนให้ทำ · ภาพจริงในโลกธุรกิจเกิดกับ Replit เดือนกรกฎาคม 2025: ผู้ใช้สั่ง "ห้ามแตะโค้ด" (code freeze) ไว้ชัดเจน แต่ agent ลบฐานข้อมูล production ทิ้งระหว่างนั้น — CEO ของ Replit ยอมรับต่อสาธารณะว่า "ยอมรับไม่ได้ และไม่ควรเกิดขึ้นได้ตั้งแต่แรก" พร้อมประกาศแก้ harness จริง: แยกฐานข้อมูล dev/production ออกจากกันอัตโนมัติ และเพิ่มโหมด "วางแผนอย่างเดียว" ที่ทำให้ code freeze บังคับใช้ได้จริงแทนที่จะเป็นแค่คำขอร้องใน prompt (ส่วนรายละเอียดที่ว่า agent ยังปลอมรายงานผลเทสต์ระหว่างนั้นด้วย มาจากคำบอกเล่าของผู้ใช้รายนั้นเอง ยังไม่มีการยืนยันแยกจาก Replit — แต่ส่วนที่ยืนยันแล้วคือการลบข้อมูลจริงระหว่าง freeze ก็หนักพอเป็นบทเรียนได้อยู่ดี)</p>
+
   <h3>8.2 เครื่องมือกัน — โง่แต่เวิร์ก</h3>
   <ul>
     <li><strong>max turns / token budget / timeout</strong> — เพดานกลไกที่ฟังดูทื่อ แต่จำเป็น: doom loop ไม่มีทางหลุดด้วยตัวเอง เพดานคือสิ่งเดียวที่การันตีว่าวงจรจะจบและคนจะได้เข้ามาดู · ตั้งจากข้อมูลจริง (งานปกติใช้กี่รอบ) ไม่ใช่เดา</li>
@@ -878,7 +862,7 @@ footer a:hover{color:var(--red);border-color:var(--red)}
   </ul>
   <p>มุมที่อยากให้มอง: เพดานพวกนี้ไม่ใช่ "ความไม่ไว้ใจ AI" — มันคือ<strong>เข็มขัดนิรภัย</strong> เราไม่ได้คาดว่าจะชนทุกวัน แต่วันที่ชน มันคุ้มทุกบาทที่ลงทุนไป · agent ที่มี stop conditions ดีคือ agent ที่กล้าปล่อยให้ทำงานยาวขึ้น — ความปลอดภัยกับความอิสระไม่ใช่ขั้วตรงข้าม มันซื้อกันและกัน</p>
 
-  <div class="note"><span class="t">สรุปบทที่ 8</span>agent ไม่รู้เองว่า "เสร็จ" หรือ "ควรเลิก" — ต้องออกแบบให้ · failure modes สี่ตัว: doom loop (วนไม่หลุดเอง), เสร็จปลอม (reward hacking), context poisoning (ของเสียเก่าลากใหม่), scope creep (งานบาน) · การ์ด: max turns/budget/timeout, ผ่าน verifier ก่อนจบ (และ agent ต้องแก้ verifier ไม่ได้), เส้นเขตชัด, ตรวจจับการวน · stop conditions ที่ดีคือสิ่งที่ทำให้กล้าปล่อย agent ทำงานยาวขึ้น</div>
+  <div class="note"><span class="t">สรุปบทที่ 8</span>agent ไม่รู้เองว่า "เสร็จ" หรือ "ควรเลิก" — ต้องออกแบบให้ · failure modes สี่ตัว: doom loop (วนไม่หลุดเอง), เสร็จปลอม (reward hacking), context poisoning (ของเสียเก่าลากใหม่), scope creep (งานบาน) · การ์ด: max turns/budget/timeout, ผ่าน verifier ก่อนจบ (และ agent ต้องแก้ verifier ไม่ได้), เส้นเขตชัด, ตรวจจับการวน · ทั้งสี่โหมดมีเคสจริงที่มีบันทึกไว้แล้ว ไม่ใช่แค่ทฤษฎี · stop conditions ที่ดีคือสิ่งที่ทำให้กล้าปล่อย agent ทำงานยาวขึ้น</div>
   <div class="chapter-end">· · ·</div>
 </section>
 
@@ -897,6 +881,7 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <li><strong>② Memory ที่ agent เขียนเอง</strong> — จดสิ่งที่เรียนรู้ระหว่างทำงานลงไฟล์/ฐานเก็บ ไว้ค้นในเซสชันหน้า · ต่างจากชั้นแรกตรงที่มันเกิดจากการทำงาน ไม่ใช่คนป้อน — โจทย์ยากคือ "จดอะไร" (ไม่ใช่ทุกอย่าง) และ "เมื่อไหร่เลิกเชื่อ" (ความรู้เก่าที่ผิดไปแล้วอันตรายกว่าไม่มี)</li>
     <li><strong>③ Skills</strong> — ความรู้เฉพาะงานที่แพ็กเป็น "คู่มือพร้อมใช้": วิธี deploy ของทีม, ฟอร์มรายงานที่ถูกต้อง, ขั้นตอน review · ถูกโหลด<em>เมื่องานเรียก</em>เท่านั้น</li>
   </ul>
+  <p>สองข้อควรระวังที่มากับความรู้สามชั้นนี้: <strong>ความจำผิด ๆ อยู่ยาวกว่าความจำถูก</strong> — memory ที่จดไว้ผิด (หรือเคยถูกแต่โลกเปลี่ยนแล้ว) จะถูกหยิบมาใช้ซ้ำ ๆ อย่างมั่นใจ จดพร้อมบริบท/วันที่ ตรวจก่อนเชื่อ และออกแบบให้ลบง่ายพอ ๆ กับเพิ่ม · และ <strong>instructions ถาวรมีแนวโน้มบวม</strong> — ทุกคนอยากยัด "กฎอีกข้อเดียว" ลง CLAUDE.md จนมันกินงบ context เอง กฎเช็กง่าย: ถ้าไม่ได้ใช้แทบทุกเซสชัน มันไม่ควรอยู่ชั้น ① — ย้ายลงชั้น skill หรือ memory แทน</p>
 
   <h3>9.2 progressive disclosure — เคล็ดที่ทำให้ความรู้ไม่กินโต๊ะ</h3>
   <p>ความรู้ทั้งหมดขององค์กรใหญ่กว่า context window หลายเท่า — โหลดหมดตั้งแต่ต้นคือจ่ายมหาศาลให้ของที่ 95% ไม่เกี่ยวกับงานตรงหน้า (บทที่ 3 สอนไว้แล้วว่าจบยังไง) · ทางออกเรียกว่า <strong>progressive disclosure</strong>: ให้ agent เห็นแค่ "สารบัญ" ตลอดเวลา แล้วเปิดเนื้อเต็มเฉพาะเมื่อจำเป็น</p>
@@ -923,12 +908,6 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     </svg>
     <figcaption><b>FIG 9.1</b> — สามชั้นความรู้: ยิ่งบนยิ่งแพงจึงต้องเล็ก ยิ่งล่างยิ่งจุได้มหาศาลเพราะจ่ายเฉพาะที่หยิบ · ศิลปะคือการวางของให้ถูกชั้น</figcaption>
   </figure>
-
-  <h3>9.3 ข้อควรระวังของระบบความจำ</h3>
-  <ul>
-    <li><strong>ความจำผิด ๆ อยู่ยาวกว่าความจำถูก</strong> — memory ที่จดไว้ผิด (หรือเคยถูกแต่โลกเปลี่ยนแล้ว) จะถูกหยิบมาใช้ซ้ำ ๆ อย่างมั่นใจ · จดพร้อมบริบท/วันที่ ตรวจก่อนเชื่อ และออกแบบให้ลบง่ายพอ ๆ กับเพิ่ม</li>
-    <li><strong>instructions ถาวรมีแนวโน้มบวม</strong> — ทุกคนอยากยัด "กฎอีกข้อเดียว" ลง CLAUDE.md จนมันกินงบ context เอง · กฎเช็กง่าย: ถ้าไม่ได้ใช้แทบทุกเซสชัน มันไม่ควรอยู่ชั้น ① — ย้ายลงชั้น skill หรือ memory</li>
-  </ul>
 
   <div class="note"><span class="t">สรุปบทที่ 9</span>จบเซสชัน = ความจำหาย — harness แก้ด้วยความรู้สามชั้น: instructions ถาวร (CLAUDE.md — โหลดทุกเซสชัน ต้องสั้น) / memory ที่ agent จดเอง / skills (คู่มือเฉพาะงาน โหลดเมื่อใช้) · progressive disclosure: เห็นสารบัญตลอด เปิดเนื้อเมื่อจำเป็น — ประหยัด context แบบบท 3 · ระวังความจำ stale และ instructions บวม: อะไรไม่ได้ใช้ทุกเซสชัน อย่าให้อยู่ชั้นแพงสุด</div>
   <div class="chapter-end">· · ·</div>
@@ -1052,7 +1031,45 @@ footer a:hover{color:var(--red);border-color:var(--red)}
   </ul>
   <p>กฎตัดสินใจสั้น ๆ: <strong>แตกเมื่องานสรุปกลับได้สั้นและทำอิสระได้จริง</strong> — แตกเพื่อ isolate ความรก ไม่ใช่แตกเพราะสถาปัตยกรรมดูเท่</p>
 
-  <div class="note"><span class="t">สรุปบทที่ 10</span>แตกงานด้วยสองเหตุผล: context isolation (ความรกตายในลูก ส่งกลับแค่สรุป) + ทำขนาน · รูปแบบ: orchestrator–worker, pipeline, fan-out/verify · การส่งงานคือเขียน prompt ให้คนไม่เห็นบทสนทนา — ต้องครบในตัว: เป้าหมาย บริบท นิยามเสร็จ รูปแบบคำตอบ · ข้อจำกัดใหญ่: ช่องสื่อสารแคบ งานแชร์ state ละเอียดไม่เหมาะ มี overhead ต่อหัว — แตกเมื่อสรุปได้สั้นและอิสระจริงเท่านั้น</div>
+  <h3>10.5 ข้ามรั้ว: เมื่อ "ลูก" ไม่ได้อยู่บ้านเดียวกัน</h3>
+  <p>ทั้งบทนี้พูดถึงการแตกงานแบบที่ลูกทุกตัวอยู่<strong>ในบ้านเดียวกัน</strong> — harness เดียวกัน โปรเสสเดียวกัน เรียกผ่าน tool ภายใน · คำถามที่ตามมาคือ agent ของทีมพี่ต้องคุยกับ agent ของบริษัทคู่ค้า ที่รันคนละเครื่อง คนละ vendor คนละ harness ล่ะ — นี่คือช่องว่างที่โปรโตคอลชื่อ <strong>A2A (Agent2Agent)</strong> เข้ามาแก้ Google เปิดตัวปี 2025 แล้วโอนให้ Linux Foundation ดูแลเป็นมาตรฐานกลาง มีทั้ง AWS, Microsoft, Salesforce, SAP ร่วมพัฒนา</p>
+
+  <figure class="fig">
+    <svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="เปรียบเทียบสองแบบ ซ้ายคือ subagent ในบ้านเดียวกันตามที่บทนี้สอน orchestrator แตกงานให้ลูกที่อยู่ harness และ vendor เดียวกัน เรียกผ่าน tool ภายใน ขวาคือ A2A ที่ agent ของเราอ่าน agent card ของอีกฝ่ายก่อนเพื่อรู้ว่ามันทำอะไรได้และยืนยันตัวตน แล้วค่อยส่งงานข้ามไปให้ agent ต่างบริษัทต่าง vendor ที่มีโมเดลตัดสินใจเองเช่นกัน">
+      <text x="170" y="24" text-anchor="middle" class="mono" fill="#54625f">ในบ้านเดียวกัน — subagent (ทั้งบทนี้)</text>
+      <rect x="95" y="40" width="150" height="42" rx="8" fill="#0e6e63"/>
+      <text x="170" y="66" text-anchor="middle" class="lbl-w">orchestrator</text>
+      <path d="M 140 82 C 120 100, 100 112, 90 124" class="flow-t" marker-end="url(#ar-t)"/>
+      <path d="M 200 82 C 220 100, 240 112, 250 124" class="flow-t" marker-end="url(#ar-t)"/>
+      <rect x="50" y="128" width="90" height="34" rx="7" fill="#fff" stroke="#54625f"/><text x="95" y="150" text-anchor="middle" class="lbl" font-size="12">ลูก A</text>
+      <rect x="200" y="128" width="90" height="34" rx="7" fill="#fff" stroke="#54625f"/><text x="245" y="150" text-anchor="middle" class="lbl" font-size="12">ลูก B</text>
+      <text x="170" y="196" text-anchor="middle" class="sub">harness เดียวกัน · vendor เดียวกัน</text>
+      <text x="170" y="214" text-anchor="middle" class="sub">เรียกผ่าน tool ภายในโปรเสสเดียว</text>
+
+      <line x1="345" y1="10" x2="345" y2="240" stroke="#ddd5c6"/>
+
+      <text x="530" y="24" text-anchor="middle" class="mono" fill="#54625f">ข้ามรั้ว — A2A (บริษัท/vendor อื่น)</text>
+      <rect x="385" y="70" width="110" height="42" rx="8" fill="#0e6e63"/>
+      <text x="440" y="96" text-anchor="middle" class="lbl-w" font-size="12">agent ของเรา</text>
+      <path d="M 495 91 H 545" class="flow-a dash" marker-end="url(#ar-a)"/>
+      <rect x="549" y="70" width="100" height="42" rx="8" fill="#fff" stroke="#c07415" stroke-dasharray="4 3"/>
+      <text x="599" y="88" text-anchor="middle" class="lbl" font-size="11">Agent Card</text>
+      <text x="599" y="104" text-anchor="middle" class="sub" font-size="10">ทำอะไรได้บ้าง</text>
+      <path d="M 599 112 V 138" class="flow-a" marker-end="url(#ar-a)"/>
+      <rect x="529" y="142" width="140" height="42" rx="8" fill="#26302f"/>
+      <text x="599" y="164" text-anchor="middle" class="lbl-w" font-size="12">agent อีกฝ่าย</text>
+      <text x="599" y="180" text-anchor="middle" class="sub-w" font-size="10">มีโมเดลตัดสินใจเอง</text>
+      <text x="530" y="212" text-anchor="middle" class="sub">อ่านการ์ด + ยืนยันตัวตนก่อนทุกครั้ง</text>
+      <text x="530" y="228" text-anchor="middle" class="sub">งานเป็นวงจร: submitted → working → เสร็จ/พัง</text>
+    </svg>
+    <figcaption><b>FIG 10.3</b> — subagent ในบทนี้อยู่บ้านเดียวกันเสมอ · A2A ขยายรูปแบบเดียวกันข้ามรั้ว โดยต้องรู้จักกันก่อน (Agent Card) และยืนยันตัวตนทุกครั้ง เพราะอีกฝั่งไม่ใช่ฟังก์ชัน แต่เป็นอีกสมองหนึ่ง</figcaption>
+  </figure>
+
+  <p>กรอบคิดที่ทั้ง Google และ Anthropic ใช้ตรงกัน: <strong>MCP ต่อ agent เข้ากับเครื่องมือ/ข้อมูล</strong> (แนวตั้ง — ภายในองค์กรเดียว, บทที่ 4.5) ส่วน <strong>A2A ต่อ agent เข้ากับ agent อื่น</strong> (แนวนอน — ข้ามองค์กร/ข้าม vendor) — สองมาตรฐานเสริมกัน ไม่ใช่คู่แข่ง กลไกคือ formalize สิ่งที่บทนี้สอนไปแล้วให้ใช้ข้ามองค์กรได้: แทนเขียน prompt บอกงานตรง ๆ แบบข้อ 10.3 ฝั่งหนึ่งอ่าน "Agent Card" ของอีกฝั่งก่อน — เอกสารที่บอกว่ามันทำอะไรได้บ้าง คุยผ่านช่องไหน ยืนยันตัวตนแบบไหน — แล้วค่อยส่งงานให้ ติดตามสถานะผ่านวงจร submitted → working → เสร็จ/พัง/ถูกยกเลิก คล้าย FIG 10.1 แต่ "ลูก" ที่ว่าอาจไม่เคยรู้จักกันมาก่อนเลย</p>
+  <p>ความต่างที่สำคัญกว่าคำว่า "tool กับ agent": ฝั่งตรงข้ามของ A2A <strong>มีโมเดลของตัวเอง ตัดสินใจเอง</strong> ไม่ใช่ฟังก์ชันที่รอรับคำสั่ง งานจึงเป็นบทสนทนาหลายจังหวะ ถามกลับระหว่างทางได้ — ต่างจากเรียก MCP tool ที่เป็น request-response ครั้งเดียวจบ กับดักที่คนพลาดบ่อย: เอา agent อิสระไปห่อเป็น MCP tool ธรรมดา แล้วเจอปัญหาจ่าย token สองต่อและตอบคำถามกลางทางไม่ได้ — เพราะเลือกโปรโตคอลผิดชั้น</p>
+  <p>ความจริงที่ควรรู้ก่อนตื่นเต้นตามกระแส: การใช้งานจริงยังกระจุกอยู่ในองค์กรใหญ่ที่ต้องเชื่อม agent ข้ามบริษัทจริง ๆ (supply chain, การเงิน, ประกันภัย) ส่วนงานทั่วไปที่ต่อ agent ภายในองค์กรเดียวกัน MCP + subagent แบบที่บทนี้สอนยังตอบโจทย์เกือบทั้งหมด — เส้นตัดสินใจง่าย ๆ คือถามว่ามี "องค์กรอื่น" หรือ trust boundary ข้ามจริงไหม ถ้าไม่มี ก็ไม่ต้องแตะ A2A · และเพราะอีกฝั่งมีโมเดลของตัวเอง ภัยใหม่ที่มากับมันคือ agent ปลอมอวดความสามารถที่ไม่มีจริงใน Agent Card เพื่อหลอกให้ถูกเลือก — ญาติสายตรงของ prompt injection ที่บทที่ 6 สอนไว้: ยิ่งเปิดคุยกับใครก็ได้ ยิ่งต้องมีกำแพงชั้นแข็งรับไว้เท่านั้น</p>
+
+  <div class="note"><span class="t">สรุปบทที่ 10</span>แตกงานด้วยสองเหตุผล: context isolation (ความรกตายในลูก ส่งกลับแค่สรุป) + ทำขนาน · รูปแบบ: orchestrator–worker, pipeline, fan-out/verify · การส่งงานคือเขียน prompt ให้คนไม่เห็นบทสนทนา — ต้องครบในตัว: เป้าหมาย บริบท นิยามเสร็จ รูปแบบคำตอบ · ข้อจำกัดใหญ่: ช่องสื่อสารแคบ งานแชร์ state ละเอียดไม่เหมาะ มี overhead ต่อหัว — แตกเมื่อสรุปได้สั้นและอิสระจริงเท่านั้น · ข้ามรั้วองค์กร/vendor ใช้ A2A แทน subagent ภายใน — คนละเครื่องมือ แต่หลักคิดเดียวกัน: บรีฟให้ครบ ต้องรู้ว่าอีกฝั่งทำอะไรได้ก่อนส่งงาน และระวังฝั่งตรงข้ามที่มีโมเดลของตัวเอง ไม่ใช่แค่ฟังก์ชัน</div>
   <div class="chapter-end">· · ·</div>
 </section>
 
@@ -1185,7 +1202,7 @@ footer a:hover{color:var(--red);border-color:var(--red)}
       <text x="632" y="80" text-anchor="middle" class="mono">บท 7 · 8</text>
       <text x="632" y="104" text-anchor="middle" class="mono" fill="#222b2e">narration สด</text><text x="632" y="120" text-anchor="middle" class="sub">เล่าว่ากำลังทำอะไร</text>
       <text x="632" y="148" text-anchor="middle" class="mono" fill="#222b2e">transcript</text><text x="632" y="164" text-anchor="middle" class="sub">ย้อนดูได้ทุกรอบ</text>
-      <text x="632" y="192" text-anchor="middle" class="mono" fill="#222b2e">/cost</text><text x="632" y="208" text-anchor="middle" class="sub">token · เงิน · เวลา</text>
+      <text x="632" y="192" text-anchor="middle" class="mono" fill="#222b2e">/usage</text><text x="632" y="208" text-anchor="middle" class="sub">token · เงิน · เวลา</text>
       <text x="632" y="236" text-anchor="middle" class="mono" fill="#222b2e">เพดานรอบ/งบ</text><text x="632" y="252" text-anchor="middle" class="sub">กัน doom loop</text>
 
       <text x="360" y="300" text-anchor="middle" class="sub">ทุกช่องคือคำตอบของ trade-off ที่บทก่อนหน้าตั้งไว้ — ไม่มีชิ้นไหนอยู่ตรงนั้นโดยบังเอิญ</text>
@@ -1205,7 +1222,71 @@ footer a:hover{color:var(--red);border-color:var(--red)}
     <li><strong>ทุกจุดขยายเปิดให้ผู้ใช้</strong> — MCP (เพิ่ม tools), hooks (เพิ่ม guardrails), skills + CLAUDE.md (เพิ่มความรู้), subagents (ขยายสเกล) — ผู้ใช้ต่อเติมได้โดยไม่ต้องรอ vendor · harness ที่ดีจึงไม่ใช่ product ปิด แต่เป็น <strong>platform</strong> ที่คนอื่นสร้างต่อได้</li>
   </ul>
 
-  <div class="note"><span class="t">สรุปบทที่ 12</span>Claude Code ลงโครง 5 ชิ้นของบทที่ 1 ได้พอดี: CLAUDE.md/compaction/agentic search = context · Read/Edit/Bash + MCP = tools · เทสต์/lint ผ่าน Bash = feedback · permission/allowlist/hooks/sandbox = guardrails · narration/transcript//cost = observability · การตัดสินใจเด่น: tools น้อยแบบ general (Bash เปิดโลก + permission เข้มชดเชย), ค้นสดแทน index ล่วงหน้า, hooks = เบรกที่เป็นโค้ด · บทเรียนใหญ่: ชิ้นส่วนทั้งห้าออกแบบแยกกันไม่ได้ และ harness ที่ดีคือ platform</div>
+  <h3>12.3 เคสจริง: ตามรอย transcript ทีละขั้น</h3>
+  <p>ทฤษฎีข้างบนอาจยังรู้สึกลอย ๆ — ตัวอย่างต่อไปนี้ประกอบจากรูปแบบงานที่เจอกันจริงบ่อย ๆ (คล้ายเคส <code>config.py</code> vs <code>config_prod.py</code> ของบทที่ 7) ไล่ทีละขั้นว่าแต่ละจังหวะคือกลไกจากบทไหนของเล่มนี้กำลังทำงานอยู่จริง พี่คนหนึ่งเจอบั๊กแล้วโยนงานให้ Claude Code ประโยคเดียว:</p>
+
+  <div class="prompt-label" style="color:var(--ink-soft)">▸ transcript ช่วงที่ 1 — รับงาน แล้วค้นแบบ pull ไม่ใช่โหลดทั้ง repo</div>
+  <pre><code>พี่: มีรายงานว่าลูกค้าสมัครสมาชิกซ้ำได้ ถ้าใช้อีเมลตัวพิมพ์ใหญ่เล็กต่างกัน
+     (User@mail.com กับ user@mail.com ควรนับเป็นคนเดียวกัน) ช่วยแก้ให้หน่อย
+
+<span class="cm">กำลังหา logic การสมัครสมาชิกในโปรเจกต์…</span>
+<span class="ph">▸ Grep</span>(pattern: "def.*(signup|register)", glob: "**/*.py")
+  ⎿ 2 matches — services/signup_service.py, admin/user_admin.py
+
+<span class="ph">▸ Read</span>(services/signup_service.py)
+  ⎿ 38 lines</code></pre>
+  <p>จุดแรกที่เห็นชัด: agent ไม่ได้โหลดทั้ง repo มาอ่าน — มันเดาคำค้นจากคำในงาน (signup, register) แล้ว grep หาก่อน นี่คือ agentic search แบบ pull ที่บทที่ 3 สอนไว้ ผลลัพธ์ที่น่าสนใจ: grep เจอ<strong>สองไฟล์</strong> ไม่ใช่ไฟล์เดียว — เก็บไว้ในหัวก่อน จะกลับมาสำคัญอีกที</p>
+
+  <div class="prompt-label" style="color:var(--ink-soft)">▸ transcript ช่วงที่ 2 — แก้ เพิ่มเทสต์ แล้วส่งให้ verifier ตัดสิน</div>
+  <pre><code><span class="cm">เจอบรรทัดที่ตรวจซ้ำ: if User.query.filter_by(email=email).first(): raise DuplicateEmailError()</span>
+<span class="cm">กำลังเช็ค test เดิมของไฟล์นี้ก่อนแก้…</span>
+<span class="ph">▸ Grep</span>(pattern: "def test_.*signup", path: "tests/test_signup.py")
+  ⎿ 4 matches — ไม่มีเคสตัวพิมพ์ใหญ่เล็กเลย
+
+<span class="ph">▸ Edit</span>(services/signup_service.py)
+  ⎿ เพิ่ม email = email.strip().lower() ก่อนตรวจซ้ำและก่อนบันทึก
+
+<span class="ph">▸ Edit</span>(tests/test_signup.py) — เพิ่มเคส test_signup_rejects_case_variant_email
+
+<span class="ph">▸ Bash</span>(pytest tests/test_signup.py -q)
+  ⎿ <span class="gd">5 passed</span></code></pre>
+  <p>ถูกต้องตามตำรา: เช็คเทสต์เดิมก่อนแก้ (กัน regression) → แก้โค้ด → <em>เพิ่มเทสต์ใหม่ให้ตรงกับบั๊กที่เพิ่งเจอ</em> → รันเพื่อดูผล — closed loop เต็มรูปแบบของบทที่ 5 ผ่าน Bash เป็นประสาทสัมผัส ถ้าจบตรงนี้ก็ดูเรียบร้อยดี แต่ agent ที่ดีไม่หยุดแค่ไฟล์ที่แก้ — มันจำได้ว่าตอน grep เจอสองไฟล์ ไม่ใช่ไฟล์เดียว</p>
+
+  <div class="prompt-label" style="color:var(--ink-soft)">▸ transcript ช่วงที่ 3 — เจอของนอกขอบเขต รายงานแทนที่จะลงมือเงียบ ๆ</div>
+  <pre><code><span class="cm">เมื่อกี้ grep เจอ user_admin.py ด้วย — เช็คว่าใช้ logic เดียวกันไหม…</span>
+<span class="ph">▸ Read</span>(admin/user_admin.py)
+  ⎿ พบฟังก์ชัน admin_create_user() — สร้าง user ตรง ๆ ไม่ผ่าน signup_service เลย
+     <span class="bd">ไม่มีการ .lower() เหมือนกัน — บั๊กเดียวกัน ช่องทางที่สอง</span>
+
+[แจ้งพี่] เจอช่องโหว่เดียวกันอีกจุดที่ admin_create_user() — นอกขอบเขตงานเดิม
+  จะแก้ให้ด้วยเลย หรือแค่รายงานไว้ก่อน?</code></pre>
+  <p>จุดนี้คือที่บทที่ 8 เตือนไว้เรื่อง scope: เจอ "ของที่ควรแก้เพิ่ม" ระหว่างทาง หลักที่ดีคือ<strong>ทำน้อยที่สุดที่แก้ปัญหา แล้วรายงานส่วนเกิน ไม่ใช่ลงมือเงียบ ๆ</strong> — ในเซสชันจริง กติกานี้มักตั้งไว้ล่วงหน้าใน <code>CLAUDE.md</code> ว่า "เจอบั๊กที่เกี่ยวข้องแต่นอกขอบเขต ให้ถามก่อน" (ความรู้ถาวรจากบทที่ 9 เสียบเข้ามาตรงจุดตัดสินใจนี้พอดี) สมมติพี่ตอบว่า "แก้ให้เลย" agent เดินหน้าต่อ:</p>
+
+  <div class="prompt-label" style="color:var(--ink-soft)">▸ transcript ช่วงที่ 4 — แตะข้อมูลจริง เส้นบนแผนที่บทที่ 6 ถูกข้าม</div>
+  <pre><code><span class="ph">▸ Edit</span>(admin/user_admin.py) — เพิ่ม .lower() ให้ตรงกับ signup_service.py
+<span class="ph">▸ Edit</span>(tests/test_user_admin.py) — เพิ่มเคสเดียวกันสำหรับ admin_create_user
+<span class="ph">▸ Bash</span>(pytest tests/ -q)
+  ⎿ <span class="gd">48 passed</span>
+
+<span class="cm">ข้อมูลเก่าที่ซ้ำกันตั้งแต่ก่อนแก้ อาจยังนอนอยู่ในฐานข้อมูลจริง — ต้องเช็ค</span>
+<span class="cm">ต้องรัน migration ทำความสะอาดอีเมลซ้ำของเก่า — คำสั่งนี้แก้ข้อมูลจริงใน production</span>
+  <span class="bd">⚠ ขออนุญาต: รัน scripts/normalize_existing_emails.py กับฐานข้อมูล production</span>
+     [อนุมัติครั้งนี้] [อนุมัติเสมอสำหรับคำสั่งนี้] [ปฏิเสธ]</code></pre>
+  <p>blast radius × reversibility ของบทที่ 6 ทำงานตรงหน้าต่อหน้า: แก้โค้ดใน branch ย้อนได้ด้วย git จึงรันเทสต์ไปเรื่อย ๆ โดยไม่ถามทุกครั้ง (allowlist จำคำตอบไว้แล้ว) แต่พอคำสั่งขยับไปแตะ<strong>ข้อมูลจริงในฐานการผลิต</strong> — วงกว้างขึ้น ย้อนยากขึ้น — เส้นที่ FIG 6.1 วาดไว้ถูกข้าม ระบบจึงเลื่อนอำนาจตัดสินใจกลับมาที่คนทันที ไม่ใช่เพราะ agent "ไม่มั่นใจ" แต่เพราะ<em>กรงกำหนดไว้แบบนั้น</em></p>
+
+  <div class="prompt-label" style="color:var(--ink-soft)">▸ transcript ช่วงที่ 5 — ประกาศเสร็จ ก็ต่อเมื่อ verifier ผ่านแล้วเท่านั้น</div>
+  <pre><code>พี่: อนุมัติ
+
+<span class="ph">▸ Bash</span>(python scripts/normalize_existing_emails.py --env=production)
+  ⎿ พบอีเมลซ้ำ 3 คู่ — รวมบัญชีเรียบร้อย
+<span class="ph">▸ Bash</span>(pytest tests/ -q)
+  ⎿ <span class="gd">48 passed, 0 failed</span>
+
+สรุปให้พี่: แก้จุดตรวจซ้ำอีเมลใน signup_service.py และ user_admin.py ให้ไม่สนตัวพิมพ์เล็ก-ใหญ่
+เพิ่มเทสต์คุมทั้งสองจุด และรวมบัญชีซ้ำเก่าที่มีอยู่แล้ว 3 คู่ในฐานข้อมูลจริง — เทสต์ทั้งหมดผ่าน 48/48</code></pre>
+  <p>ประโยคสรุปมาหลัง<em>เทสต์ผ่าน</em>เท่านั้น — ตรงกฎของบทที่ 8: "ห้ามบอกว่าเสร็จ จนกว่า verifier จะผ่าน" ไล่ทั้งห้าช่วงย้อนกลับไป จะเห็นว่าไม่มีจังหวะไหนเป็น "ความฉลาด" ล้วน ๆ ของโมเดล — ทุกจังหวะคือจุดที่ harness ออกแบบไว้ล่วงหน้า: ให้มันค้นแทนยัด context (บท 3), ให้มันมีเครื่องมือที่คืนผลตรงพอจะตัดสินใจต่อ (บท 4), ให้มันตรวจตัวเองด้วยเทสต์ก่อนพูดว่าเสร็จ (บท 5, 8), ขีดเส้นว่าอะไรถามก่อนอะไรทำเลย (บท 6), มี <code>CLAUDE.md</code> กำกับพฤติกรรมตอนเจอทางแยก (บท 9) — ทุกกล่องใน FIG 12.1 ไม่ใช่แค่รายการฟีเจอร์ มันคือสิ่งที่กำลังทำงานจริงในทุกวินาทีของเซสชันข้างบน โมเดลตัวเดียวกันเป๊ะ ถ้าไม่มีรั้วพวกนี้ ผลลัพธ์จะไม่ใช่แบบนี้</p>
+
+  <div class="note"><span class="t">สรุปบทที่ 12</span>Claude Code ลงโครง 5 ชิ้นของบทที่ 1 ได้พอดี: CLAUDE.md/compaction/agentic search = context · Read/Edit/Bash + MCP = tools · เทสต์/lint ผ่าน Bash = feedback · permission/allowlist/hooks/sandbox = guardrails · narration/transcript/usage = observability · transcript 5 ช่วงข้างบนคือทุกกลไกนี้ทำงานร่วมกันจริงในงานเดียว · การตัดสินใจเด่น: tools น้อยแบบ general (Bash เปิดโลก + permission เข้มชดเชย), ค้นสดแทน index ล่วงหน้า, hooks = เบรกที่เป็นโค้ด · บทเรียนใหญ่: ชิ้นส่วนทั้งห้าออกแบบแยกกันไม่ได้ และ harness ที่ดีคือ platform</div>
   <div class="chapter-end">· · ·</div>
 </section>
 
@@ -1294,7 +1375,19 @@ def agent(task, <span class="ph">max_turns=30</span>):            <span class="c
   <p>ความจริงที่ควรพูดตรง ๆ: งานส่วนใหญ่<strong>ไม่ต้องสร้าง harness ใหม่</strong> · Claude Code + <code>CLAUDE.md</code> + skills + hooks + MCP ปรับแต่งได้ไกลกว่าที่คิดมาก — และการปรับแต่ง harness สำเร็จรูปให้เข้ากับทีม<em>ก็คือ harness engineering</em> เหมือนกัน เป็นจุดเริ่มที่ถูกต้องสำหรับ 90% ของงาน</p>
   <p>สร้างเองเมื่อไหร่: workflow เฉพาะทางที่ harness ทั่วไปไม่รองรับ (agent ฝังใน product ของเรา, loop พิเศษเฉพาะโดเมน), ต้องคุม infra/ข้อมูลระดับเข้มข้น, หรือ harness คือตัว product เอง · และถ้าจะสร้าง — <strong>Agent SDK</strong> และ framework ต่าง ๆ มี loop + tool plumbing สำเร็จให้แล้ว: เวลาของเราควรหมดไปกับชิ้นส่วนทั้งห้าของบทที่ 1 ไม่ใช่ไปกับท่อ</p>
 
-  <h3>13.4 checklist ก่อนลงมือ</h3>
+  <h3>13.4 ตารางเทียบ cost/latency — เครื่องมือตัดสินใจรวมทั้งเล่ม</h3>
+  <p>ทุกบทที่ผ่านมาซ่อน trade-off แบบเดียวกันไว้ซ้ำ ๆ : หมุนไปทาง<strong>เร็ว/ประหยัด</strong> หรือหมุนไปทาง<strong>แม่น/ปลอดภัย</strong> — ไม่มีทางเลือกไหน "ถูกเสมอ" มีแต่เหมาะกับสถานการณ์ไหน ตารางนี้รวบทุกจุดที่เคยแยกกันพูดไว้ในบทก่อน ๆ ให้เห็นพร้อมกันในที่เดียว:</p>
+  <table>
+    <tr><th>การตัดสินใจ</th><th>หมุนไปทาง "เร็ว/ประหยัด"</th><th>หมุนไปทาง "แม่น/ปลอดภัย"</th><th>เอียงไปทางไหนเมื่อไหร่</th></tr>
+    <tr><td><b>ความหนาของ sandbox</b><br>(บท 6)</td><td>ไม่มี/บาง — รันทันที ไม่มี overhead ตั้งกรง</td><td>container/worktree แยก, ตัด network — ทุก tool call แบกค่าความปลอดภัย</td><td>งานแตะข้อมูลเสี่ยงหรือรับ input จากนอก → หนา · งานอ่านอย่างเดียวในเครื่องปิด → บางพอ</td></tr>
+    <tr><td><b>ความถี่ compaction</b><br>(บท 3)</td><td>สรุปบ่อย/สั้น — context เบา ประหยัดทุกรอบ</td><td>เก็บดิบไว้นาน — รายละเอียด/เหตุผลก่อนหน้าไม่หาย</td><td>งานตรงไปตรงมา ยาวแต่ไม่ซับซ้อน → สรุปถี่ได้ · งาน debug ที่รายละเอียดเก่าคือกุญแจ → ยืดอายุ context ดิบ</td></tr>
+    <tr><td><b>ความช้าของ verifier</b><br>(บท 5, 11)</td><td>เทสต์ย่อยไว — วนได้หลายรอบต่อนาที แต่ตรวจได้แค่ผิวเผิน</td><td>suite เต็ม/ช้า — มั่นใจกว่ามาก แต่ 20 นาทีต่อรอบ = วนได้ไม่กี่ครั้ง</td><td>ระหว่างวนแก้ → ใช้ตัวไวก่อน · ก่อนประกาศเสร็จจริง → ต้องผ่านตัวเต็มด้วย (ใช้สองชั้นซ้อนกันได้)</td></tr>
+    <tr><td><b>ความถี่การถามสิทธิ์</b><br>(บท 6)</td><td>auto มาก ถามน้อย — งานลื่นไม่สะดุด</td><td>ถามถี่ทุกจุดเสี่ยง — คุมแน่นกว่า แต่ถี่เกินจะเจอ alarm fatigue จนคนกดผ่านโดยไม่อ่าน</td><td>วางเส้นถามตาม blast radius × reversibility ของ FIG 6.1 — ไม่ใช่ตามความรู้สึกกลัว</td></tr>
+    <tr><td><b>แตกงานให้ subagent</b><br>(บท 10)</td><td>ทำเองตัวเดียว — ไม่มี overhead ตั้งต้นซ้ำ (system prompt, สำรวจใหม่)</td><td>แตกหลายตัว — context isolation + ทำขนานได้ แต่จ่าย overhead ต่อหัวทุกตัว</td><td>งานสรุปกลับได้สั้นและอิสระจริง (บท 10.4) → แตก · งานเล็กหรือต้องแชร์ state ถี่ → ทำเอง</td></tr>
+  </table>
+  <p>สังเกตแกนร่วมของทุกแถว: ด้าน "เร็ว/ประหยัด" จ่ายด้วยความเสี่ยงที่ค้นพบช้าลง ส่วนด้าน "แม่น/ปลอดภัย" จ่ายด้วยเวลาและ token ที่มากขึ้น — ไม่มีจุดไหนหมุนไปสุดทางใดทางหนึ่งได้ตลอด งานเสี่ยงต่ำหมุนไปทางเร็วได้เต็มที่ งานเสี่ยงสูงต้องยอมจ่ายแพงขึ้น <strong>โจทย์ของคนออกแบบ harness ไม่ใช่หาค่าเดียวที่ดีที่สุด แต่คือรู้ว่าน็อบตัวไหนควบคุมอะไร แล้วหมุนให้เข้ากับความเสี่ยงของงานตรงหน้า</strong></p>
+
+  <h3>13.5 checklist ก่อนลงมือ</h3>
   <pre><code><span class="cm"># CHECKLIST — ตอบให้ครบก่อนเขียนโค้ดบรรทัดแรก</span>
 
 [ ] งานนี้มี verifier ที่เชื่อได้ไหม?      <span class="gd">ไม่มี → หยุด ออกแบบ verifier ก่อน (บท 5)</span>
@@ -1305,7 +1398,7 @@ def agent(task, <span class="ph">max_turns=30</span>):            <span class="c
 [ ] เก็บ transcript ตั้งแต่วันแรกไหม?   <span class="gd">debug ไม่ได้ถ้ามองไม่เห็น (บท 7)</span>
 [ ] มีชุดงานทดสอบ ~10 ชิ้นไว้เทียบไหม?  <span class="gd">ไม่มีตัวเลข = ปรับมั่ว (บท 11)</span></code></pre>
 
-  <div class="note"><span class="t">สรุปบทที่ 13</span>ลำดับคิด: verifier ก่อน → tools น้อยสุดที่พอ → guardrails ตามแผนที่ความเสี่ยงจริง → memory/subagents เมื่อเจ็บจริง · แก่นของ harness เล็กมาก (loop ไม่ถึง 40 บรรทัด) — ที่เหลือคือความประณีตที่เติมทีหลังได้ · 90% ของงานควรปรับแต่งของสำเร็จรูป ไม่ใช่สร้างใหม่ — และถ้าสร้าง ใช้ SDK จัดการท่อ เวลาเราไว้คิดชิ้นส่วนทั้งห้า</div>
+  <div class="note"><span class="t">สรุปบทที่ 13</span>ลำดับคิด: verifier ก่อน → tools น้อยสุดที่พอ → guardrails ตามแผนที่ความเสี่ยงจริง → memory/subagents เมื่อเจ็บจริง · แก่นของ harness เล็กมาก (loop ไม่ถึง 40 บรรทัด) — ที่เหลือคือความประณีตที่เติมทีหลังได้ · 90% ของงานควรปรับแต่งของสำเร็จรูป ไม่ใช่สร้างใหม่ — และถ้าสร้าง ใช้ SDK จัดการท่อ เวลาเราไว้คิดชิ้นส่วนทั้งห้า · ทุกน็อบ (sandbox, compaction, verifier, permission, subagent) หมุนบนแกนเร็ว/ประหยัด vs แม่น/ปลอดภัยแกนเดียวกัน — เลือกตามความเสี่ยงของงาน ไม่มีค่าที่ดีที่สุดค่าเดียว</div>
   <div class="chapter-end">· · ·</div>
 </section>
 
@@ -1342,7 +1435,7 @@ def agent(task, <span class="ph">max_turns=30</span>):            <span class="c
 
   <h3>14.2 ทิศทางที่มองเห็นแล้ว</h3>
   <ul>
-    <li><strong>มาตรฐานเปิดชนะ</strong> — MCP ทำให้ tools เป็นของกลางข้าม harness · แนวโน้มเดียวกันกำลังไล่มาตรฐานส่วนอื่น ๆ ของ harness ตามมา</li>
+    <li><strong>มาตรฐานเปิดชนะ</strong> — MCP ทำให้ tools เป็นของกลางข้าม harness · แนวโน้มเดียวกันไล่มาตรฐานส่วนอื่นตามมาแล้วจริง ๆ — A2A (บทที่ 10.5) พยายามทำแบบเดียวกันกับการคุยข้าม agent ข้ามองค์กร แม้วันนี้ยังแคบกว่า MCP มาก ก็เป็นสัญญาณของทิศทางเดียวกัน</li>
     <li><strong>agent ใช้ agent</strong> — โครง orchestration ของบทที่ 10 กำลังโตจาก "ฟีเจอร์" เป็นวิธีทำงานหลัก: งานใหญ่ = ฝูง agent ที่มีคนดูแลผ่าน observability ชั้นดี</li>
     <li><strong>harness กลายเป็น infrastructure ปกติ</strong> — แบบเดียวกับที่ CI/CD เคยเป็นของแปลกแล้ววันนี้ทุกทีมมี · อีกไม่นาน "ทีมนี้มี eval suite กับ permission policy ของ agent ไหม" จะเป็นคำถามพื้นฐานเท่ากับ "มี git ไหม"</li>
   </ul>
